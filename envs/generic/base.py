@@ -24,8 +24,7 @@ class SwappableBase(mjx_env.MjxEnv):
         ):
         """Initializes the base bipedal environment for RL training and 
         evaluation. This class implements core functionalities that are common 
-        among various bipedal tasks, such as the Atalante X Exoskeleton, 
-        Unitree G1, Westwood robotics BRUCE, and others. Moreover, this class 
+        among various roboics tasks. Moreover, this class 
         implements a swappable backend for JAX and NumPy, allowing for 
         flexibility when it comes to training and evaluation (i.e. JAX for
         training and NumPy for evaluation).

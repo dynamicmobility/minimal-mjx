@@ -1,7 +1,7 @@
-name: only-warmup
-save_dir: "ppo-hypernet/MOCheetah-HyperActorCritic"
-description: ""
-env: "Cheetah"
+name: first-try
+save_dir: results/cheetah
+description: enter some description here...
+env: Cheetah
 backend: np # jnp or np. Always uses jnp for training
 env_config:
   ctrl_dt: 0.01
@@ -32,7 +32,7 @@ learning_params:
     action_repeat: 1
     batch_size: 64
     clipping_epsilon: 0.1
-    deterministic_eval: true
+    deterministic_eval: false
     discounting: 0.98
     entropy_cost: 0.01
     episode_length: 500
@@ -42,7 +42,7 @@ learning_params:
     num_envs: 128
     num_evals: 15
     num_minibatches: 2
-    num_timesteps: 50000000
+    num_timesteps: 10000000
     num_updates_per_batch: 4
     reward_scaling: 1.0
     unroll_length: 20

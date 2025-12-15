@@ -3,7 +3,7 @@
 SESSION_NAME="RLGL"
 PYTHON_SCRIPT="begin_run"
 MODULE_NAME="learning.training"
-CONDA_ENV_NAME="myenv"
+CONDA_ENV_NAME="minimal-mjx"
 YAML_FILE=$1
 
 # Start a new tmux session (detached) with the specified name

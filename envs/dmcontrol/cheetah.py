@@ -59,7 +59,6 @@ class Cheetah(SwappableBase):
             done    = False,
             action  = ctrl
         )
-        
         obs = self._get_obs(data, parent_state.info)
         return self._state_init_fn(data, obs, reward, done, metrics, info)
     
@@ -81,7 +80,7 @@ class Cheetah(SwappableBase):
         reward, metrics = self.get_reward_and_metrics(
             data    = data,
             info    = state.info,
-            metrics = {},
+            metrics = state.metrics,
             done    = done,
             action  = action
         )

@@ -40,7 +40,7 @@ def get_last_model(config: dict) -> Path:
     
     return model_files[-1]
 
-def load_so_policy(config, deterministic=True):
+def load_policy(config, deterministic=True):
     path = get_last_model(config)
     print(f'Loading model at {path.as_posix()}')
     policy = checkpoint.load_policy(

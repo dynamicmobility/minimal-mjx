@@ -47,7 +47,7 @@ def setup_training(config):
     return ppo_params, network_params
     
 def plot_progress(
-    num_steps, metrics, times, x_data, y_data, y_dataerr, ppo_params, save_dir, y_keys
+    num_steps, metrics, times, x_data, y_data, y_dataerr, ppo_params, save_dir
 ):
     # clear_output(wait=True)
     print('=== TRAINING EPOCH ===')
@@ -59,17 +59,17 @@ def plot_progress(
     x_data.append(num_steps)
     y_data.append(metrics["eval/episode_reward"])
     y_dataerr.append(metrics["eval/episode_reward_std"])
-    # pd.DataFrame(
-    #     {
-    #         'times': times,
-    #         'x': x_data,
-    #         'y': y_data,
-    #         'yerr': y_dataerr
-    #     }
-    # ).to_csv(
-    #     save_dir / 'progress.csv',
-    #     index=False
-    # )
+    pd.DataFrame(
+        {
+            'times': times,
+            'x': x_data,
+            'y': y_data,
+            'yerr': y_dataerr
+        }
+    ).to_csv(
+        save_dir / 'progress.csv',
+        index=False
+    )
 
     fig, ax = plt.subplots(1, 1, figsize=(10, 5))
     ax.set_xlim([0, ppo_params["num_timesteps"] * 1.25])
@@ -78,16 +78,11 @@ def plot_progress(
     # ax.set_title(f"y={y_data[-1]:.3f}")
     y_data = np.array(y_data)
     y_dataerr = np.array(y_dataerr)
-    if np.nan in y_data.flatten() or np.nan in y_dataerr.flatten():
+    if np.nan in y_data or np.nan in y_dataerr:
         raise Exception(f'NaN found... \n\n{y_data}\n\n{y_dataerr}')
-    if len(y_data.shape) == 1:
-        y_data = y_data[:, np.newaxis]
-    if len(y_dataerr.shape) == 1:
-        y_dataerr = y_dataerr[:, np.newaxis]
 
-    for i, key in enumerate(y_keys):
-        ax.errorbar(x_data, y_data[:,i], yerr=y_dataerr[:,i], label=key)
-        ax.scatter(x_data, y_data[:,i])
+    ax.errorbar(x_data, y_data, yerr=y_dataerr)
+    ax.scatter(x_data, y_data)
     ax.legend()
     # for i, (t, value) in enumerate(zip(x_data, y_data)):
     #     ax.text(x_data[i], y_data[i], f'({t}, {value:.0f})', fontsize=8, ha='right', va='bottom', color='red')
@@ -112,7 +107,7 @@ def train(
     )
     
     x_data, y_data, y_dataerr = [], [], []
-    times = [datetime.now()]
+    times = []
     train_fn = functools.partial(
         train_algo, **dict(ppo_params),
         network_factory=network_factory,
@@ -125,7 +120,6 @@ def train(
             y_dataerr  = y_dataerr,
             ppo_params = ppo_params,
             save_dir   = output_dir,
-            y_keys     = ['reward']
         ),
         policy_params_fn=lambda current_step, make_policy, params: checkpoint.save(
             path   = output_dir.resolve(),

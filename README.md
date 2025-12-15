@@ -7,6 +7,9 @@ policy training, saving, and evaluation easy and implements some nice-to-haves.
 2. Base environment class that contains generic reward functions and useful functions
 3. Configuration files that allow you to set parameters for your envs + for PPO
 
+There exists a `requirements.txt` in the home directory which includes the packages
+needed to run this code.
+
 # Steps to take to 'do RL'!
 We will work of off the Cheetah environment from Deepmind's "DM Control". This guide
 is not meant to be comprehensive, but is hopefully enough information to fill in 

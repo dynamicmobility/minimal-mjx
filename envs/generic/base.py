@@ -1,13 +1,14 @@
-from typing import Any, Dict, Optional, Union
-from pathlib import Path
+import numpy as np
 import jax
+import jax.numpy as jnp
+from abc import ABC, abstractmethod
+from pathlib import Path
 from ml_collections import config_dict
-from mujoco_playground._src.dm_control_suite import common
+
 import mujoco as mj
+from mujoco_playground._src.dm_control_suite import common
 from mujoco import mjx
 from mujoco_playground._src import mjx_env
-import jax.numpy as jnp
-import numpy as np
 
 from utils import geometry as geo
 from utils.state import MujocoState
@@ -223,6 +224,34 @@ class SwappableBase(mjx_env.MjxEnv):
         state = self._state_init_fn(data, obs, reward, done, metrics, info)
 
         return state
+    
+    @abstractmethod
+    def step(self, state, action):
+        """Steps the environment with an action outputted by the policy network.
+        This function is run after policy evaluations and returns an Markov Decision
+        Process state, which includes the observation for the next policy evaluation."""
+        raise NotImplementedError()
+    
+    @abstractmethod
+    def reward_function(
+        data,
+        action,
+        info,
+        done
+    ):
+        """Returns reward terms as a dictionary ({name: reward value}). These
+        rewards are then summed in a weighted fashion based on their name and the
+        weight values provided in your config."""
+        raise NotImplementedError()
+    
+    @abstractmethod
+    def _get_obs(
+        self,
+        data,
+        info
+    ):
+        """Returns the observation given the data and info."""
+        raise NotImplementedError()
     
     @property
     def observation_size(self):

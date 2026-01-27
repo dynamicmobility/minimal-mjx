@@ -1,9 +1,4 @@
-import os
-os.environ["MUJOCO_GL"] = "egl"
-os.environ['JAX_PLATFORMS']='cpu'
-# os.environ['JAX_TRACEBACK_FILTERING']='off'
-
-from utils.setupGPU import run_setup
+from minimal_mjx.utils.setupGPU import run_setup
 run_setup() # Run the GPU setup
 
 # Python imports
@@ -12,9 +7,9 @@ import numpy as np
 from pathlib import Path
 
 # Local imports
-from learning.startup import create_environment, get_step_reset, read_config
-from learning.inference import rollout
-from utils.plotting import save_video, save_metrics
+from minimal_mjx.learning.startup import create_environment, get_step_reset, read_config
+from minimal_mjx.learning.inference import rollout
+from minimal_mjx.utils.plotting import save_video, save_metrics
     
 def main():
     # Load arguments

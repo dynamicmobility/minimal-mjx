@@ -1,9 +1,7 @@
-import os
-
 # Internal imports
-from utils.setupGPU import run_setup
-from learning.startup import read_config, create_environment, get_commit_hash
-from learning.training import setup_training, train
+from minimal_mjx.utils.setupGPU import run_setup
+from minimal_mjx.learning.startup import read_config, create_environment, get_commit_hash
+from minimal_mjx.learning.training import setup_training, train
 
 # Basic imports
 from pathlib import Path

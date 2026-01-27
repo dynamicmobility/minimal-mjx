@@ -10,8 +10,8 @@ from mujoco_playground._src.dm_control_suite import common
 from mujoco import mjx
 from mujoco_playground._src import mjx_env
 
-from utils import geometry as geo
-from utils.state import MujocoState
+from minimal_mjx.utils import geometry as geo
+from minimal_mjx.utils.state import MujocoState
 
 class SwappableBase(mjx_env.MjxEnv):
     """Atalante walker task."""

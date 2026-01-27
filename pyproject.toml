@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "minimal-mjx"
+version = "0.1.0"
+description = "Short description"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Neil Janwani", email = "njanwani@gatech.com" }
+]
+dependencies = [
+  "numpy",
+  "jax",
+  "playground",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

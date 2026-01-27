@@ -6,8 +6,8 @@ from glob import glob
 from tqdm import tqdm
 
 # Internal imports
-import utils.plotting as plotting
-from utils.state import MujocoState
+import minimal_mjx.utils.plotting as plotting
+from minimal_mjx.utils.state import MujocoState
 
 # RL imports
 from brax.training.agents.ppo import checkpoint

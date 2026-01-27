@@ -1,11 +1,8 @@
-import os
-os.environ["MUJOCO_GL"] = "egl"
-os.environ['JAX_PLATFORMS']='cpu'
-from utils.setupGPU import run_setup
+from minimal_mjx.utils.setupGPU import run_setup
 from pathlib import Path
-from learning.training.startup import read_config, create_environment, get_step_reset
-from learning.inference import rollout, circle_vel, vx_sine_vel, load_policy
-from utils.plotting import save_video, save_metrics, save_trajectories
+from minimal_mjx.learning.startup import read_config, create_environment, get_step_reset
+from minimal_mjx.learning.inference import rollout, load_policy
+from minimal_mjx.utils.plotting import save_video, save_metrics
 import jax
 import numpy as np
 from mujoco_playground import wrapper

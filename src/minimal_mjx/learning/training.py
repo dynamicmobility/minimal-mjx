@@ -27,7 +27,6 @@ from mujoco_playground import wrapper
 from mujoco_playground.config import locomotion_params
 from mujoco_playground._src import mjx_env
 import numpy as np
-from utils.plotting import get_subplot_grid
 
 # Other environments
 

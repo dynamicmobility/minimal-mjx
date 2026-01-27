@@ -12,9 +12,9 @@ import numpy as np
 from pathlib import Path
 
 # Local imports
-from learning.training.startup import create_environment, get_step_reset, read_config
-from learning.inference import rollout, circle_vel, vx_sine_vel, vy_sine_vel
-from utils.plotting import save_video, save_metrics, save_trajectories
+from learning.startup import create_environment, get_step_reset, read_config
+from learning.inference import rollout
+from utils.plotting import save_video, save_metrics
     
 def main():
     # Load arguments

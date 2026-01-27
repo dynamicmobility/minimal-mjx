@@ -2,12 +2,10 @@
 # Basic imports
 import sys
 import yaml
-import numpy as np
 
 # jax and MJX imports
 from mujoco_playground._src.mjx_env import MjxEnv
 import jax
-import envs
 
 # Other environments
 from ml_collections import config_dict
@@ -52,20 +50,13 @@ def create_environment(
     animate = False
 ) -> tuple[MjxEnv, config_dict.ConfigDict]:
     """Creates an MJX enironment for training"""
+    raise Exception('No.')
     env_params = create_config_dict(config['env_config'])
     backend = 'jnp' if for_training else config['backend']
     kwargs = {
         'backend'    : backend,
         'env_params' : env_params
     }
-    match config['env']:
-        case 'Cheetah':
-            from envs.dmcontrol.cheetah import Cheetah
-            env = Cheetah(**kwargs)
-        case _:
-            raise Exception(f'Environment {env["config"]} not implemented.')
-
-    return env, env_params
 
 
 def get_step_reset(env, backend):

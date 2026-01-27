@@ -1,28 +1,19 @@
 # Basic imports
 from pathlib import Path
-from typing import Any, Union
 from etils import epath
 import numpy as np
 from glob import glob
 from tqdm import tqdm
-import pickle
 
 # Internal imports
 import utils.plotting as plotting
 from utils.state import MujocoState
-import utils.geometry as geo
-from learning.training.training import setup_training
 
 # RL imports
-import functools
-from brax.training.checkpoint import get_network
 from brax.training.agents.ppo import checkpoint
-from brax.training.acme import running_statistics
-from brax.training.agents.ppo import networks as ppo_networks
 
 # jax and MJX imports
 from mujoco_playground._src.mjx_env import MjxEnv
-import mujoco as mj
 import jax
 
 def get_all_models(config: dict, sort=True) -> Path:
@@ -143,28 +134,3 @@ def rollout(
     else:
         frames = None
     return frames, reward_plotter, data_plotter, info_plotter
-        
-def circle_vel(state, vxlim, vylim, freq):
-    t = state.data.time
-    info = state.info.copy()
-    omega = 2 * np.pi * freq
-    info['vdes'] = np.array([vxlim * np.sin(omega * t),
-                             vylim * np.cos(omega * t),
-                             0.0])
-    return info
-
-def vx_sine_vel(state, vxlim, vylim, freq):
-    t = state.data.time
-    info = state.info.copy()
-    omega = 2 * np.pi * freq
-    info['vdes'] = np.array([vxlim * np.sin(omega * t),
-                             0.0,
-                             0.0])
-    return info
-
-def vy_sine_vel(state, vxlim, vylim, freq):
-    t = state.data.time
-    info = state.info.copy()
-    freq = 2 * np.pi * freq
-    info['vdes'] = np.array([0.0, vylim * np.sin(freq * t), 0.0])
-    return info

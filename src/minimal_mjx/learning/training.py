@@ -5,13 +5,10 @@ import datetime
 import pickle
 import pandas as pd
 from ml_collections import config_dict
-from learning.wrappers import MultiObjectiveEpisodeWrapper
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
 # Graphics and plotting.
-import matplotlib
-# matplotlib.use("TkAgg")  # headless backend, no X server required
 import matplotlib.pyplot as plt
 
 # RL imports
@@ -19,13 +16,9 @@ import functools
 from brax.training.agents.ppo import checkpoint
 from brax.training.agents.ppo.train import train as train_ppo
 from brax.training.agents.ppo import networks as ppo_networks
-from brax.training.acme import running_statistics
-from brax.envs.wrappers.training import VmapWrapper
 
 # jax and MJX imports
 from mujoco_playground import wrapper
-from mujoco_playground.config import locomotion_params
-from mujoco_playground._src import mjx_env
 import numpy as np
 
 # Other environments

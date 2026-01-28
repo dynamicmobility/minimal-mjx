@@ -22,11 +22,11 @@ class SwappableBase(mjx_env.MjxEnv):
             backend = 'jnp',
             num_free = 3
         ):
-        """Initializes the base bipedal environment for RL training and 
+        """Initializes the base "swappable" MJX environment for RL training and 
         evaluation. This class implements core functionalities that are common 
         among various roboics tasks. Moreover, this class 
         implements a swappable backend for JAX and NumPy, allowing for 
-        flexibility when it comes to training and evaluation (i.e. JAX for
+        flexibility when it comes to training and evaluation (i.e. JaX for
         training and NumPy for evaluation).
         
         Args:
@@ -49,7 +49,8 @@ class SwappableBase(mjx_env.MjxEnv):
         self.nq = self._mj_model.nq
         self.nv = self._mj_model.nv
         self.nu = self._mj_model.nu
-        self.num_free = num_free
+        self.qpos_free = num_free
+        self.qvel_free = num_free - 1 if num_free == 7 else num_free
         
         self._jt_lims = self._mj_model.jnt_range[num_free:].T
                 
@@ -186,9 +187,9 @@ class SwappableBase(mjx_env.MjxEnv):
         maxval: jax.Array,
     ):
         # TODO: This does not appropriately handle joints with no limits
-        val = self._uniform(jt_key, qpos[self.num_free:].shape[0], minval=minval, maxval=maxval)
-        val = self._np.clip(val + qpos[self.num_free:], *self._jt_lims)
-        qpos = self._set_val_fn(qpos, val, min_idx=self.num_free, max_idx=None)
+        val = self._uniform(jt_key, qpos[self.qpos_free:].shape[0], minval=minval, maxval=maxval)
+        val = self._np.clip(val + qpos[self.qpos_free:], *self._jt_lims)
+        qpos = self._set_val_fn(qpos, val, min_idx=self.qpos_free, max_idx=None)
         return qpos
 
     def reset(

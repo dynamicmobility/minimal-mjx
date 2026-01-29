@@ -1,6 +1,8 @@
 numpy
 jax
 playground
+pandas
+h5py
 
 [dev]
 pytest

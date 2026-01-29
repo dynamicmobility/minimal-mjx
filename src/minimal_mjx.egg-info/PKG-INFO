@@ -8,6 +8,8 @@ Description-Content-Type: text/markdown
 Requires-Dist: numpy
 Requires-Dist: jax
 Requires-Dist: playground
+Requires-Dist: pandas
+Requires-Dist: h5py
 Provides-Extra: dev
 Requires-Dist: pytest; extra == "dev"
 Requires-Dist: black; extra == "dev"

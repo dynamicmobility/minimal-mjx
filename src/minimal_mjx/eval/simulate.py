@@ -10,6 +10,22 @@ from pathlib import Path
 from minimal_mjx.learning.startup import create_environment, get_step_reset, read_config
 from minimal_mjx.learning.inference import rollout
 from minimal_mjx.utils.plotting import save_video, save_metrics
+from minimal_mjx.envs.generic.base import SwappableBase
+
+def make_dummy_inference_fn(env: SwappableBase, mode='zero'):
+    """Makes a 'fake' inference function for simulating the environment without 
+    a policy. Modes are 'zero' (which sends all zeros as the action) and 
+    'random' (which sends random actions in [-1, 1])"""
+    inference_fn = None
+    match mode:
+        case 'zero':
+            inference_fn = lambda obs, rng: (np.zeros(env.action_size), None)
+        case 'random':
+            inference_fn = lambda obs, rng: (2 * np.random.random(env.action_size) - 1, None)
+        case _:
+            raise Exception(f'Unknown inference type {mode}')
+
+    return inference_fn
     
 def main():
     # Load arguments
@@ -20,15 +36,10 @@ def main():
     env, env_cfg = create_environment(config, idealistic=False, animate=False)
 
     # Get reset and step functions
-    reset, step = get_step_reset(env, config['backend'])
+    step, reset = get_step_reset(env, config['backend'])
     
     # Simulate the environment
-    def inference_fn(obs, rng):
-        """Dummy inference function for the environment."""
-        ctrl = np.zeros(env.action_size)
-        # ctrl = np.random.random(env.action_size) * 2 - 1
-        # ctrl = np.ones(env.action_size) * 1.5  
-        return ctrl, None
+    inference_fn = make_dummy_inference_fn('zero')
 
     T = env.dt * 500
     frames, reward_plotter, data_plotter, info_plotter= rollout(

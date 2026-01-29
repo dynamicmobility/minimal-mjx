@@ -59,16 +59,16 @@ def create_environment(
     }
 
 
-def get_step_reset(env, backend):
+def get_step_reset(env):
     """Returns the reset and step functions based on the backend."""
-    if backend == 'jnp':
+    if env._np == jax.numpy:
         print('jitting')
         reset = jax.jit(env.reset)
         step = jax.jit(env.step)
     else:
         reset = env.reset
         step = env.step
-    return reset, step
+    return step, reset
 
 def get_commit_hash():
     import subprocess

@@ -244,6 +244,11 @@ class SwappableBase(mjx_env.MjxEnv):
         weight values provided in your config."""
         raise NotImplementedError()
     
+    @property
+    def action_size(self):
+        """Required action size for the environment"""
+        raise NotImplementedError()
+    
     @abstractmethod
     def _get_obs(
         self,

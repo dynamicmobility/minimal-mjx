@@ -22,7 +22,7 @@ def main():
     
     # inference_fn = lambda obs, rng: (np.zeros(env.action_size, dtype=np.float32), None)
     jit_inference_fn = jax.jit(inference_fn)
-    reset, step = get_step_reset(env, config['backend'])
+    step, reset = get_step_reset(env, config['backend'])
 
     # Rollout the policy in the environment
     T = env.dt * 1000

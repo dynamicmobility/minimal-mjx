@@ -6,7 +6,7 @@ import mujoco
 import h5py
 import cv2
 from pathlib import Path
-from utils import geometry as geo
+from minimal_mjx.utils import geometry as geo
 import mediapy as media
 
 def set_mpl_params():
@@ -172,11 +172,11 @@ def save_metrics(plotter, path=Path('visualization/metrics.pdf')):
     plt.close(fig)
 
 
-def save_video(frames, env_cfg, path=Path('visualization/policy_rollout.mp4')):
+def save_video(frames, dt, path=Path('visualization/policy_rollout.mp4')):
     print(f'Saving video to {path}')
     ans = 'y'
     if ans.lower() in ['y', 'yes']:
-        media.write_video(path, frames, fps=round(1 / env_cfg.ctrl_dt))
+        media.write_video(path, frames, fps=round(1 / dt))
 
 
 def load_dict_from_hdf5(filename):

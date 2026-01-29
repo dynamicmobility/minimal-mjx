@@ -8,6 +8,7 @@ from tqdm import tqdm
 # Internal imports
 import minimal_mjx.utils.plotting as plotting
 from minimal_mjx.utils.state import MujocoState
+from minimal_mjx.learning.startup import get_step_reset
 
 # RL imports
 from brax.training.agents.ppo import checkpoint
@@ -76,8 +77,6 @@ def infer_frame_dim(
 
 
 def rollout(
-    reset,
-    step,
     inference_fn,
     env           : MjxEnv,
     T             = 10.0,
@@ -90,7 +89,8 @@ def rollout(
     show_progress = True
 ) -> tuple[list, plotting.RewardPlotter, plotting.MujocoPlotter, plotting.InfoPlotter]:
     width, height = infer_frame_dim(env.mj_model, width, height)
-    
+    step, reset = get_step_reset(env)
+
     # Set up the environment
     rng = jax.random.PRNGKey(np.random.randint(0, 100000))
     state: MujocoState = reset(rng)

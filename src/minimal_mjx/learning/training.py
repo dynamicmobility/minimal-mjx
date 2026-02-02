@@ -1,6 +1,7 @@
 # Basic imports
 from pathlib import Path
 import time
+import wandb
 import datetime
 import pickle
 import pandas as pd
@@ -21,25 +22,22 @@ from brax.training.agents.ppo import networks as ppo_networks
 from mujoco_playground import wrapper
 import numpy as np
 
-# Other environments
-
 def setup_training(config):
     """Sets up the right training variables for the given algorithm"""
     ppo_params = config_dict.ConfigDict(config['ppo_params'])
     network_params = config_dict.ConfigDict(config['network_params'])
-    
-    # learning_config = config['learning_params']
-    # if 'ppo_params' in learning_config:
-    #     for key in learning_config['ppo_params']:
-    #         ppo_params[key] = learning_config['ppo_params'][key]
-    # if 'network_params' in learning_config:
-    #     for key in learning_config['network_params']:
-    #         network_params[key] = eval(learning_config['network_params'][key])
-    
     return ppo_params, network_params
     
 def plot_progress(
-    num_steps, metrics, times, x_data, y_data, y_dataerr, ppo_params, save_dir
+    num_steps,
+    metrics, 
+    times, 
+    x_data, 
+    y_data, 
+    y_dataerr, 
+    ppo_params, 
+    save_dir,
+    run=None
 ):
     # clear_output(wait=True)
     print('=== TRAINING EPOCH ===')
@@ -79,12 +77,57 @@ def plot_progress(
     # for i, (t, value) in enumerate(zip(x_data, y_data)):
     #     ax.text(x_data[i], y_data[i], f'({t}, {value:.0f})', fontsize=8, ha='right', va='bottom', color='red')
 
-    save_dir = save_dir / 'progress.pdf'
+    save_dir = save_dir / 'progress.svg'
     plt.savefig(save_dir)
+    if run:
+        with open(save_dir / 'progress.svg', "r") as f:
+            svg = f.read()
+        run.log(
+            {"reward_plot": wandb.Html(svg)},
+            step=num_steps,
+        )
+    
+def initialize_wandb(
+    entity='njanwani-gatech',
+    project='prefMORL',
+    name='test',
+    config={},
+    **kwargs
+):
+    # Start a new wandb run to track this script.
+    run = wandb.init(
+        entity    = entity,
+        project   = project,
+        name      = name,
+        config    = config,
+        **kwargs
+    )
+    return run
 
+def save_model(current_step, make_policy, params, network_config, output_dir: Path, run: wandb.Run = None):
+    checkpoint.save(
+        path   = output_dir.resolve(),
+        step   = current_step,
+        params = params,
+        config = network_config
+    )
+    if run:
+        artifact = wandb.Artifact(
+            name=f"{current_step}",
+            type="model"
+        )
+        artifact.add_dir(output_dir.resolve())
+        run.log_artifact(artifact)
+        
 
 def train(
-    config_yaml, output_dir: Path, env, eval_env, ppo_params, network_params
+    config_yaml,
+    output_dir: Path,
+    env, 
+    eval_env, 
+    ppo_params, 
+    network_params,
+    run: wandb.Run # need to make this work...
 ):
     train_algo = train_ppo
     network_factory = functools.partial(
@@ -97,7 +140,6 @@ def train(
         normalize_observations=ppo_params.normalize_observations,
         network_factory=network_factory,
     )
-    
     x_data, y_data, y_dataerr = [], [], []
     times = []
     train_fn = functools.partial(
@@ -112,12 +154,12 @@ def train(
             y_dataerr  = y_dataerr,
             ppo_params = ppo_params,
             save_dir   = output_dir,
+            run        = run
         ),
-        policy_params_fn=lambda current_step, make_policy, params: checkpoint.save(
-            path   = output_dir.resolve(),
-            step   = current_step,
-            params = params,
-            config = network_config
+        policy_params_fn=functools.partial(
+            save_model,
+            output_dir    = output_dir,
+            run           = run
         ),
     )
     

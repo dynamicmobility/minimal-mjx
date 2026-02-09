@@ -80,7 +80,7 @@ def plot_progress(
     save_dir = save_dir / 'progress.svg'
     plt.savefig(save_dir)
     if run:
-        with open(save_dir / 'progress.svg', "r") as f:
+        with open(save_dir, "r") as f:
             svg = f.read()
         run.log(
             {"reward_plot": wandb.Html(svg)},
@@ -127,7 +127,6 @@ def train(
     eval_env, 
     ppo_params, 
     network_params,
-    run: wandb.Run # need to make this work...
 ):
     train_algo = train_ppo
     network_factory = functools.partial(
@@ -140,6 +139,7 @@ def train(
         normalize_observations=ppo_params.normalize_observations,
         network_factory=network_factory,
     )
+    run = initialize_wandb(name=f'{config_yaml['save_dir']}/{config_yaml['name']}') # move this outside...
     x_data, y_data, y_dataerr = [], [], []
     times = []
     train_fn = functools.partial(
@@ -158,15 +158,16 @@ def train(
         ),
         policy_params_fn=functools.partial(
             save_model,
-            output_dir    = output_dir,
-            run           = run
+            output_dir        = output_dir,
+            run               = run,
+            network_config    = network_config
         ),
     )
     
     make_inference_fn, trained_params, metrics = train_fn(
         environment=env,
         wrap_env_fn=wrapper.wrap_for_brax_training,
-        # eval_env=eval_env,
+        eval_env=eval_env,
     )
     print(f"time to jit: {times[1] - times[0]}")
     print(f"time to train: {times[-1] - times[1]}")

@@ -22,13 +22,13 @@ def read_yaml(yaml_file):
         sys.exit(1) 
     return data
 
-def read_config():
+def read_config(path=None):
     """Reads the YAML config file"""
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 2 and path is None:
         print("Usage: python script.py <yaml_file>")
         sys.exit(1)
     
-    yaml_file = sys.argv[1]
+    yaml_file = sys.argv[1] if path is None else path
     data = read_yaml(yaml_file)
     
     return config_dict.ConfigDict(data)

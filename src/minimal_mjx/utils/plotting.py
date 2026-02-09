@@ -165,7 +165,7 @@ class RewardPlotter:
     
 
 def save_metrics(plotter, path=Path('visualization/metrics.pdf')):
-    print(f'Saving metrics to {path}...')
+    print(f'Saving metrics to {path}')
     fig, axs = plotter.plot()
     fig.tight_layout()
     fig.savefig(path)

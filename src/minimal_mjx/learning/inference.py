@@ -86,7 +86,8 @@ def rollout(
     width         = None,
     height        = None,
     gen_vid       = True,
-    show_progress = True
+    show_progress = True,
+    camera        = None,
 ) -> tuple[list, plotting.RewardPlotter, plotting.MujocoPlotter, plotting.InfoPlotter]:
     width, height = infer_frame_dim(env.mj_model, width, height)
     step, reset = get_step_reset(env)
@@ -126,7 +127,7 @@ def rollout(
         print('Generating video...')
         frames = env.render(
             trajectory   = traj,
-            camera       = 'track',
+            camera       = camera,
             height       = height,
             width        = width,
             scene_option = scene_option,

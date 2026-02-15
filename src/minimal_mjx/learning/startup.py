@@ -43,21 +43,6 @@ def create_config_dict(config: dict) -> config_dict.ConfigDict:
             config_dict_obj[key] = value
     return config_dict_obj
 
-def create_environment(
-    config: dict,
-    for_training = False,
-    idealistic = False,
-    animate = False
-) -> tuple[MjxEnv, config_dict.ConfigDict]:
-    """Creates an MJX enironment for training"""
-    raise Exception('No.')
-    env_params = create_config_dict(config['env_config'])
-    backend = 'jnp' if for_training else config['backend']
-    kwargs = {
-        'backend'    : backend,
-        'env_params' : env_params
-    }
-
 
 def get_step_reset(env):
     """Returns the reset and step functions based on the backend."""

@@ -20,6 +20,8 @@ import jax
 def get_all_models(config: dict, sort=True) -> Path:
     """Returns the last model file in the model directory."""
     model_dir = Path(config['save_dir']) / config['name']
+    if not model_dir.exists():
+        raise FileNotFoundError(f"Model directory does not exist: {model_dir}")
     dir_files = glob(str(model_dir / '*'))
     model_files = [Path(f) for f in dir_files if '.' not in f]
     if sort:

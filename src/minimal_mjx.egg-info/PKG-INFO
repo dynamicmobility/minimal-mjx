@@ -2,7 +2,7 @@ Metadata-Version: 2.4
 Name: minimal-mjx
 Version: 0.1.0
 Summary: Short description
-Author-email: Neil Janwani <njanwani@gatech.com>
+Author-email: Anonymous <someone@email.com>
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
 Requires-Dist: numpy

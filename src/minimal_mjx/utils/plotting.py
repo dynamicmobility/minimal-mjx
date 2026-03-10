@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -6,7 +5,6 @@ import mujoco
 import h5py
 import cv2
 from pathlib import Path
-from minimal_mjx.utils import geometry as geo
 import mediapy as media
 
 def set_mpl_params():

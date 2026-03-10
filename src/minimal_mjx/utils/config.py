@@ -1,22 +1,16 @@
-
-# Basic imports
-import sys
 import yaml
-
-# jax and MJX imports
-from mujoco_playground._src.mjx_env import MjxEnv
-import jax
-
-# Other environments
+import sys
 from ml_collections import config_dict
+
+class FlowSeqDumper(yaml.Dumper):
+    def represent_sequence(self, tag, sequence, flow_style=None):
+        # Force all sequences (lists) to use flow style
+        return super().represent_sequence(tag, sequence, flow_style=True)
 
 def read_yaml(yaml_file):
     try:
         with open(yaml_file, 'r') as file:
             data = yaml.safe_load(file)
-            # print('\n=== Config ===')
-            # print(yaml.dump(data, default_flow_style=False))
-            # print('==============')
     except Exception as e:
         print(f"Error reading {yaml_file}: {e}")
         sys.exit(1) 
@@ -42,18 +36,6 @@ def create_config_dict(config: dict) -> config_dict.ConfigDict:
         else:
             config_dict_obj[key] = value
     return config_dict_obj
-
-
-def get_step_reset(env):
-    """Returns the reset and step functions based on the backend."""
-    if env._np == jax.numpy:
-        print('jitting')
-        reset = jax.jit(env.reset)
-        step = jax.jit(env.step)
-    else:
-        reset = env.reset
-        step = env.step
-    return step, reset
 
 def get_commit_hash():
     import subprocess

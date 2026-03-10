@@ -8,7 +8,6 @@ from tqdm import tqdm
 # Internal imports
 import minimal_mjx.utils.plotting as plotting
 from minimal_mjx.utils.state import MujocoState
-from minimal_mjx.learning.startup import get_step_reset
 
 # RL imports
 from brax.training.agents.ppo import checkpoint
@@ -16,6 +15,17 @@ from brax.training.agents.ppo import checkpoint
 # jax and MJX imports
 from mujoco_playground._src.mjx_env import MjxEnv
 import jax
+
+def get_step_reset(env):
+    """Returns the reset and step functions based on the backend."""
+    if env._np == jax.numpy:
+        print('jitting')
+        reset = jax.jit(env.reset)
+        step = jax.jit(env.step)
+    else:
+        reset = env.reset
+        step = env.step
+    return step, reset
 
 def get_all_models(config: dict, sort=True) -> Path:
     """Returns the last model file in the model directory."""

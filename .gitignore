@@ -31,3 +31,5 @@ post-icra
 *.mov
 
 standing-tests
+
+wandb/

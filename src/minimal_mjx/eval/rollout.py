@@ -1,52 +1,75 @@
-from minimal_mjx.utils.setupGPU import run_setup
-from pathlib import Path
-from minimal_mjx.learning.startup import read_config, create_environment, get_step_reset
-from minimal_mjx.learning.inference import rollout, load_policy
-from minimal_mjx.utils.plotting import save_video, save_metrics
+import minimal_mjx as mm
+from minimal_mjx.utils import plotting
+from mujoco_playground._src.mjx_env import MjxEnv
 import jax
 import numpy as np
-from mujoco_playground import wrapper
+from tqdm import tqdm
 
-def main():
-    # Set up the GPU environment
-    # run_setup()
-    
-    # Read the config file from command line argument
-    config = read_config()
-
-    # Create the environment
-    env, env_cfg = create_environment(config, idealistic=True, animate=False)
-    
-    # Load the model
-    inference_fn = load_policy(config)
-    
-    # inference_fn = lambda obs, rng: (np.zeros(env.action_size, dtype=np.float32), None)
-    jit_inference_fn = jax.jit(inference_fn)
-    step, reset = get_step_reset(env, config['backend'])
-
-    # Rollout the policy in the environment
-    T = env.dt * 1000
-    frames, reward_plotter, data_plotter, info_plotter = rollout(
-        reset        = reset,
-        step         = step, 
-        inference_fn = jit_inference_fn,
-        env          = env, 
-        T            = T,
-        width        = 640,
-        height       = 480,
-        show_progress= True
-    )
-
-    # Save metrics
-    save_metrics(reward_plotter, path=Path(f'visualization/{config['env']}_metrics.pdf'))
-
-    # Save the video
-    save_video(
-        frames,
-        path=Path(f'visualization/{config["env"]}_rollout.mp4'),
-        env_cfg=env_cfg,
-    )
+def rollout_policy(
+    inference_fn,
+    env           : MjxEnv,
+    T             = 10.0,
+    info_init_fn  = lambda state: state.info,
+    info_step_fn  = lambda state: state.info,
+    info_plot_key = None,
+    width         = None,
+    height        = None,
+    gen_vid       = True,
+    show_progress = True,
+    camera        = None,
+) -> tuple[list, plotting.RewardPlotter, plotting.MujocoPlotter, plotting.InfoPlotter]:
+    def infer_frame_dim(
+        mj_model, width, height
+    ):
+        if width is None:
+            width = mj_model.vis.global_.offwidth
+        if height is None:
+            height = mj_model.vis.global_.offheight
         
+        return width, height
+    width, height = infer_frame_dim(env.mj_model, width, height)
+    step, reset = mm.learning.inference.get_step_reset(env)
 
-if __name__ == '__main__':
-    main()
+    # Set up the environment
+    rng = jax.random.PRNGKey(np.random.randint(0, 100000))
+    state: mm.MujocoState = reset(rng)
+    
+    # Initialize the state
+    initial_info = state.info | info_init_fn(state)
+    state = state.replace(info=initial_info)
+
+    # Setup reward plotting
+    reward_plotter = plotting.RewardPlotter(state.metrics)
+    data_plotter = plotting.MujocoPlotter()
+    info_plotter = plotting.InfoPlotter(plotkey=info_plot_key)
+    data_plotter.add_row(state.data)
+
+    # Rollout and record data
+    N = int(T / env.dt)
+    traj = [state]
+    for i in tqdm(range(N), disable=not show_progress):
+        ctrl, _ = inference_fn(state.obs, rng)
+        state = step(state, ctrl)
+        state = state.replace(info=state.info | info_step_fn(state))
+        data_plotter.add_row(state.data)
+        reward_plotter.add_row(state.metrics, state.reward)
+        info_plotter.add_row(state.data.time, state.info)
+        traj.append(state)
+        
+        if state.done:
+            break
+
+    scene_option = plotting.get_mj_scene_option(contacts=False, com=False)
+
+    if gen_vid:
+        print('Generating video...')
+        frames = env.render(
+            trajectory   = traj,
+            camera       = camera,
+            height       = height,
+            width        = width,
+            scene_option = scene_option,
+        )
+    else:
+        frames = None
+    return frames, reward_plotter, data_plotter, info_plotter

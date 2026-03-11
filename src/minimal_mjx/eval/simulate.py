@@ -1,59 +1,59 @@
-from minimal_mjx.utils.setupGPU import run_setup
-run_setup() # Run the GPU setup
+# from minimal_mjx.utils.setupGPU import run_setup
+# run_setup() # Run the GPU setup
 
-# Python imports
-import argparse
-import numpy as np
-from pathlib import Path
+# # Python imports
+# import argparse
+# import numpy as np
+# from pathlib import Path
 
-# Local imports
-from minimal_mjx.learning.startup import create_environment, get_step_reset, read_config
-from minimal_mjx.learning.inference import rollout
-from minimal_mjx.utils.plotting import save_video, save_metrics
-from minimal_mjx.envs.generic.base import SwappableBase
+# # Local imports
+# from minimal_mjx.learning.startup import create_environment, get_step_reset, read_config
+# from minimal_mjx.learning.inference import rollout
+# from minimal_mjx.utils.plotting import save_video, save_metrics
+# from minimal_mjx.envs.generic.base import SwappableBase
 
-def make_dummy_inference_fn(env: SwappableBase, mode='zero'):
-    """Makes a 'fake' inference function for simulating the environment without 
-    a policy. Modes are 'zero' (which sends all zeros as the action) and 
-    'random' (which sends random actions in [-1, 1])"""
-    inference_fn = None
-    match mode:
-        case 'zero':
-            inference_fn = lambda obs, rng: (np.zeros(env.action_size), None)
-        case 'random':
-            inference_fn = lambda obs, rng: (2 * np.random.random(env.action_size) - 1, None)
-        case _:
-            raise Exception(f'Unknown inference type {mode}')
+# def make_dummy_inference_fn(env: SwappableBase, mode='zero'):
+#     """Makes a 'fake' inference function for simulating the environment without 
+#     a policy. Modes are 'zero' (which sends all zeros as the action) and 
+#     'random' (which sends random actions in [-1, 1])"""
+#     inference_fn = None
+#     match mode:
+#         case 'zero':
+#             inference_fn = lambda obs, rng: (np.zeros(env.action_size), None)
+#         case 'random':
+#             inference_fn = lambda obs, rng: (2 * np.random.random(env.action_size) - 1, None)
+#         case _:
+#             raise Exception(f'Unknown inference type {mode}')
 
-    return inference_fn
+#     return inference_fn
     
-def main():
-    # Load arguments
-    config = read_config()
-    env_name = config['env']
+# def main():
+#     # Load arguments
+#     config = read_config()
+#     env_name = config['env']
     
-    # Loading the environment
-    env, env_cfg = create_environment(config, idealistic=False, animate=False)
+#     # Loading the environment
+#     env, env_cfg = create_environment(config, idealistic=False, animate=False)
 
-    # Get reset and step functions
-    step, reset = get_step_reset(env, config['backend'])
+#     # Get reset and step functions
+#     step, reset = get_step_reset(env, config['backend'])
     
-    # Simulate the environment
-    inference_fn = make_dummy_inference_fn('zero')
+#     # Simulate the environment
+#     inference_fn = make_dummy_inference_fn('zero')
 
-    T = env.dt * 500
-    frames, reward_plotter, data_plotter, info_plotter= rollout(
-        reset,
-        step,
-        inference_fn,
-        env,
-        T=T,
-        height=640,
-        width=480,
-    )
+#     T = env.dt * 500
+#     frames, reward_plotter, data_plotter, info_plotter= rollout(
+#         reset,
+#         step,
+#         inference_fn,
+#         env,
+#         T=T,
+#         height=640,
+#         width=480,
+#     )
 
-    save_metrics(reward_plotter, path=Path(f'visualization/{env_name}_metrics.png'))
-    save_video(frames, env_cfg, path=Path(f'visualization/{env_name}_sim.mp4'))
+#     save_metrics(reward_plotter, path=Path(f'visualization/{env_name}_metrics.png'))
+#     save_video(frames, env_cfg, path=Path(f'visualization/{env_name}_sim.mp4'))
     
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

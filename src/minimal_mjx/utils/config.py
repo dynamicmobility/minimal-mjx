@@ -27,6 +27,8 @@ def read_config(path=None):
     
     return config_dict.ConfigDict(data)
 
+
+
 def create_config_dict(config: dict) -> config_dict.ConfigDict:
     """Converts a dictionary to a ConfigDict."""
     config_dict_obj = config_dict.ConfigDict()
@@ -36,6 +38,14 @@ def create_config_dict(config: dict) -> config_dict.ConfigDict:
         else:
             config_dict_obj[key] = value
     return config_dict_obj
+
+def save_config(config, path):
+    """Saves a ConfigDict (or dict) to a YAML file."""
+    if isinstance(config, config_dict.ConfigDict):
+        config = config.to_dict()
+    with open(path, 'w') as file:
+        yaml.dump(config, file, Dumper=FlowSeqDumper, default_flow_style=False)
+
 
 def get_commit_hash():
     import subprocess

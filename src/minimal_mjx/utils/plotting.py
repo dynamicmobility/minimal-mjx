@@ -161,9 +161,19 @@ class RewardPlotter:
         axs[len(self.axdata)].plot(self.rewards)
         return fig, axs
     
+def ensure_dir_exists(path):
+    response = input(f"Create directory {path}? (y/n): ").strip().lower()
+    if response not in ['y', 'yes']:
+        return False
+    Path(path).mkdir(parents=True, exist_ok=True)
+    return True
+    
 
 def save_metrics(plotter, path=Path('visualization/metrics.pdf')):
     print(f'Saving metrics to {path}')
+    ans = ensure_dir_exists(path)
+    if not ans:
+        return
     fig, axs = plotter.plot()
     fig.tight_layout()
     fig.savefig(path)
@@ -172,9 +182,10 @@ def save_metrics(plotter, path=Path('visualization/metrics.pdf')):
 
 def save_video(frames, dt, path=Path('visualization/policy_rollout.mp4')):
     print(f'Saving video to {path}')
-    ans = 'y'
-    if ans.lower() in ['y', 'yes']:
-        media.write_video(path, frames, fps=round(1 / dt))
+    ans = ensure_dir_exists(path)
+    if not ans:
+        return False
+    media.write_video(path, frames, fps=round(1 / dt))
 
 
 def load_dict_from_hdf5(filename):

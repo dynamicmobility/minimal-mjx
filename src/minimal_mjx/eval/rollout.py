@@ -5,6 +5,21 @@ import jax
 import numpy as np
 from tqdm import tqdm
 
+def make_dummy_inference_fn(env: mm.envs.SwappableBase, mode='zero'):
+    """Makes a 'fake' inference function for simulating the environment without 
+    a policy. Modes are 'zero' (which sends all zeros as the action) and 
+    'random' (which sends random actions in [-1, 1])"""
+    inference_fn = None
+    match mode:
+        case 'zero':
+            inference_fn = lambda obs, rng: (np.zeros(env.action_size), None)
+        case 'random':
+            inference_fn = lambda obs, rng: (2 * np.random.random(env.action_size) - 1, None)
+        case _:
+            raise Exception(f'Unknown inference type {mode}')
+
+    return inference_fn
+
 def rollout_policy(
     inference_fn,
     env           : MjxEnv,

@@ -27,66 +27,7 @@ def setup_training(config):
     ppo_params = config_dict.ConfigDict(config['ppo_params'])
     network_params = config_dict.ConfigDict(config['network_params'])
     return ppo_params, network_params
-    
-def plot_progress(
-    num_steps,
-    metrics, 
-    times, 
-    x_data, 
-    y_data, 
-    y_dataerr, 
-    ppo_params, 
-    save_dir,
-    run=None
-):
-    # clear_output(wait=True)
-    print('=== TRAINING EPOCH ===')
-    print('time', time.time())
-    print('num_steps', num_steps)
-    print('total steps', ppo_params["num_timesteps"])
-    # quit()
-    times.append(datetime.now())
-    x_data.append(num_steps)
-    y_data.append(metrics["eval/episode_reward"])
-    y_dataerr.append(metrics["eval/episode_reward_std"])
-    pd.DataFrame(
-        {
-            'times': times,
-            'x': x_data,
-            'y': y_data,
-            'yerr': y_dataerr
-        }
-    ).to_csv(
-        save_dir / 'progress.csv',
-        index=False
-    )
 
-    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
-    ax.set_xlim([0, ppo_params["num_timesteps"] * 1.25])
-    ax.set_xlabel("# environment steps")
-    ax.set_ylabel("reward per episode")
-    # ax.set_title(f"y={y_data[-1]:.3f}")
-    y_data = np.array(y_data)
-    y_dataerr = np.array(y_dataerr)
-    if np.nan in y_data or np.nan in y_dataerr:
-        raise Exception(f'NaN found... \n\n{y_data}\n\n{y_dataerr}')
-
-    ax.errorbar(x_data, y_data, yerr=y_dataerr)
-    ax.scatter(x_data, y_data)
-    ax.legend()
-    # for i, (t, value) in enumerate(zip(x_data, y_data)):
-    #     ax.text(x_data[i], y_data[i], f'({t}, {value:.0f})', fontsize=8, ha='right', va='bottom', color='red')
-
-    save_dir = save_dir / 'progress.svg'
-    plt.savefig(save_dir)
-    if run:
-        with open(save_dir, "r") as f:
-            svg = f.read()
-        run.log(
-            {"reward_plot": wandb.Html(svg)},
-            step=num_steps,
-        )
-        
 
 def train(
     config_yaml,

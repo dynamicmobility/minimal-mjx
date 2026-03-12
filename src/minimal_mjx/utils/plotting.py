@@ -188,12 +188,10 @@ def plot_progress(
     save_dir,
     run=None
 ):
-    # clear_output(wait=True)
     print('=== TRAINING EPOCH ===')
     print('time', time.time())
     print('num_steps', num_steps)
     print('total steps', ppo_params["num_timesteps"])
-    # quit()
     times.append(datetime.now())
     x_data.append(num_steps)
     y_data.append(metrics["eval/episode_reward"])
@@ -214,7 +212,6 @@ def plot_progress(
     ax.set_xlim([0, ppo_params["num_timesteps"] * 1.25])
     ax.set_xlabel("# environment steps")
     ax.set_ylabel("reward per episode")
-    # ax.set_title(f"y={y_data[-1]:.3f}")
     y_data = np.array(y_data)
     y_dataerr = np.array(y_dataerr)
     if np.nan in y_data or np.nan in y_dataerr:
@@ -223,7 +220,7 @@ def plot_progress(
     ax.errorbar(x_data, y_data, yerr=y_dataerr)
     ax.scatter(x_data, y_data)
     ax.legend()
-    
+
     save_dir = save_dir / 'progress.svg'
     plt.savefig(save_dir)
     if run:

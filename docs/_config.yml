@@ -1,0 +1,7 @@
+title: minimal_mjx Documentation
+remote_theme: just-the-docs/just-the-docs
+color_scheme: dark
+logo: 
+search_enabled: true
+aux_links:
+  GitHub: https://github.com/yourusername/minimal_mjx

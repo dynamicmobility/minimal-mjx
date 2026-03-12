@@ -33,3 +33,5 @@ post-icra
 standing-tests
 
 wandb/
+.env
+src/minimal_mjx.egg-info

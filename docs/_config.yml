@@ -1,6 +1,6 @@
 # Site settings
-title: Dynamo Figures
-description: A Python package for creating composite images, extracting frames, and converting videos to GIFs.
+title: Minimal MJX
+description: An easy way to train RL agents using MJX.
 baseurl: "/minimal_mjx"
 url: "https://dynamicmobility.github.io"
 

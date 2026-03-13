@@ -104,7 +104,7 @@ class SwappableBase(mjx_env.MjxEnv):
                 size=shape
             )
             self._mjx_model = self._mj_model
-            self._split = lambda key, n=2: (None for _ in range(n))  # No RNG in np backend
+            self._split = lambda key, num=2: (None for _ in range(num))  # No RNG in np backend
             
             def splice(operand, start_indicies, slice_sizes):
                 slices = tuple(slice(start, start + size) for start, size in zip(start_indicies, slice_sizes))

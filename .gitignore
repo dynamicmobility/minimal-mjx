@@ -29,9 +29,11 @@ post-icra
 
 *.mp4
 *.mov
+*.pdf
 
 standing-tests
 
 wandb/
 .env
 src/minimal_mjx.egg-info
+example/results/*

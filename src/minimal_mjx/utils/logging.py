@@ -1,14 +1,27 @@
 import wandb
 from brax.training import checkpoint
 from pathlib import Path
-from minimal_mjx.utils.config import read_config, save_config
+from minimal_mjx.utils.config import read_config, save_config, get_commit_hash
 from brax.training.agents.ppo.checkpoint import _CONFIG_FNAME
 from ml_collections.config_dict import ConfigDict
+import os
 
 
 def initialize_wandb(entity='njanwani-gatech', project='prefMORL', name='test', config={}, **kwargs):
     """Initialize and return a new W&B run."""
     return wandb.init(entity=entity, project=project, name=name, config=config, **kwargs)
+
+def begin_training_log(config):
+    # Make training directory
+    output_dir = Path(config['save_dir']) / config['name']
+    os.makedirs(output_dir, exist_ok=config['name'] == 'test')
+
+    # Save config in directory
+    config_save_path = Path(output_dir) / 'config.yaml'
+    if config.name != 'test':
+        git_hash = get_commit_hash()
+        config.git_hash = git_hash
+    save_config(config, config_save_path)
 
 
 def save_model(current_step, make_policy, params, network_config, output_dir: Path, run: wandb.Run = None):
@@ -25,7 +38,6 @@ def save_model(current_step, make_policy, params, network_config, output_dir: Pa
         artifact.add_dir((output_dir / f'{current_step:012d}').resolve())
         artifact.metadata['iteration'] = current_step
         run.log_artifact(artifact)
-
 
 def _find_artifact(run: wandb.apis.public.Run, prefix: str) -> wandb.Artifact:
     """Return the latest artifact whose name contains `prefix`, or raise ValueError."""

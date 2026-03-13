@@ -3,7 +3,7 @@ import mujoco
 import numpy as np
 
 @dataclass
-class MujocoState:
+class EnvState:
     data: mujoco.MjData
     obs: np.ndarray
     reward: float
@@ -13,7 +13,7 @@ class MujocoState:
     
     def replace(self, **kwargs):
         """Replace fields in the MujocoState."""
-        return MujocoState(
+        return EnvState(
             data=kwargs.get('data', self.data),
             obs=kwargs.get('obs', self.obs),
             reward=kwargs.get('reward', self.reward),

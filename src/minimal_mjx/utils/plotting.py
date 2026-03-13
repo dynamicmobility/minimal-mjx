@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Sequence
+from datetime import datetime
 
 import cv2
 import h5py
 import pandas as pd
-import datetime
 import time
 import wandb
 import matplotlib as mpl
@@ -219,7 +219,6 @@ def plot_progress(
 
     ax.errorbar(x_data, y_data, yerr=y_dataerr)
     ax.scatter(x_data, y_data)
-    ax.legend()
 
     save_dir = save_dir / 'progress.svg'
     plt.savefig(save_dir)
@@ -234,21 +233,42 @@ def plot_progress(
 # ---------------------------------------------------------------------------
 # I/O helpers
 # ---------------------------------------------------------------------------
+def check_directory_exists(path):
+    path = Path(path)
+    if path.suffix:
+        raise Exception('path is a file, not a directory', path.resolve())
+    
+    if path.exists() and path.is_dir():
+        return True
+    else:
+        response = input(f"Directory '{path}' does not exist. Create it? [y/N]: ").strip().lower()
+        if response == 'y':
+            path.mkdir(parents=True, exist_ok=True)
+            return True
+        else:
+            return False
+
 
 def save_metrics(plotter: RewardPlotter, path: Path = Path('visualization/metrics.pdf')) -> None:
     """Plot metrics from a RewardPlotter and save the figure to *path*."""
-    print(f'Saving metrics to {path}...')
+    print(f'Saving metrics to {path}')
+    path = Path(path)
+    if not check_directory_exists(path.parent):
+        return
     fig, _ = plotter.plot()
     fig.tight_layout()
     fig.savefig(path)
     plt.close(fig)
 
 
-def save_video(frames: list[np.ndarray], env_cfg: Any,
+def save_video(frames: list[np.ndarray], dt: float,
                path: Path = Path('visualization/policy_rollout.mp4')) -> None:
     """Write a list of frames to an MP4 video at the environment control rate."""
     print(f'Saving video to {path}')
-    media.write_video(path, frames, fps=round(1 / env_cfg.ctrl_dt))
+    path = Path(path)
+    if not check_directory_exists(path.parent):
+        return
+    media.write_video(path, frames, fps=round(1 / dt))
 
 
 def load_dict_from_hdf5(filename: str | Path) -> dict[str, np.ndarray]:

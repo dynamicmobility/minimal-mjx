@@ -1,5 +1,7 @@
 # MINIMAL-MJX
 
+WARNING:jax._src.xla_bridge:An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+
 This repository represents starter code for MJX-based RL from the Dynamic Mobility
 Lab. The code has been built of off MuJoCo Playground and tailored to make
 policy training, saving, and evaluation easy and implements some nice-to-haves.

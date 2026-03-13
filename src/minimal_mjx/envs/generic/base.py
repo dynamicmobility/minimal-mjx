@@ -9,9 +9,7 @@ import mujoco as mj
 from mujoco_playground._src.dm_control_suite import common
 from mujoco import mjx
 from mujoco_playground._src import mjx_env
-
-from minimal_mjx.utils import geometry as geo
-from minimal_mjx.utils.state import MujocoState
+from minimal_mjx.utils import EnvState
 
 class SwappableBase(mjx_env.MjxEnv):
     """Atalante walker task."""
@@ -153,7 +151,7 @@ class SwappableBase(mjx_env.MjxEnv):
                 model, data, ctrl, n_substeps
             )
             
-            self._state_init_fn = lambda data, obs, reward, done, metrics, info: MujocoState(
+            self._state_init_fn = lambda data, obs, reward, done, metrics, info: EnvState(
                 data, obs, reward, done, metrics, info
             )
             def set_val(arr, val, min_idx=None, max_idx=None):
@@ -294,18 +292,9 @@ class SwappableBase(mjx_env.MjxEnv):
 
     def get_reward_and_metrics(
         self,
-        data,
-        info,
-        metrics,
-        done,
-        action: jax.Array,
+        rewards,
+        metrics
     ) -> tuple[jax.Array, dict[str, jax.Array]]:
-        rewards = self.reward_function(
-            data   = data, 
-            action = action, 
-            info   = info, 
-            done   = done
-        )
         rewards = {k: v * self.params.reward.weights[k] for k, v in rewards.items()}
         reward = sum(rewards.values())
         

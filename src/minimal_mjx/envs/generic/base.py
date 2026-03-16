@@ -104,7 +104,7 @@ class SwappableBase(mjx_env.MjxEnv):
                 size=shape
             )
             self._mjx_model = self._mj_model
-            self._split = lambda key, n=2: (None for _ in range(n))  # No RNG in np backend
+            self._split = lambda key, num=2: (None for _ in range(num))  # No RNG in np backend
             
             def splice(operand, start_indicies, slice_sizes):
                 slices = tuple(slice(start, start + size) for start, size in zip(start_indicies, slice_sizes))
@@ -133,20 +133,25 @@ class SwappableBase(mjx_env.MjxEnv):
                 self._mj_model, time, qpos, qvel, ctrl, xfrc_applied
             )
 
-            def mj_step(model, data, ctrl, n_substeps):
-                data = init_data(
-                    model,
-                    data.time,
-                    data.qpos,
-                    data.qvel,
-                    data.ctrl,
-                    data.xfrc_applied
-                )
+            def mj_step(model, old_data, ctrl, n_substeps):
+                new_data = mj.MjData(model)
 
+                # Allocate state buffer
+                state_size = mj.mj_stateSize(model, mj.mjtState.mjSTATE_FULLPHYSICS)
+                state = np.empty(state_size)
+
+                # Copy state from old_data
+                mj.mj_getState(model, old_data, state, mj.mjtState.mjSTATE_FULLPHYSICS)
+
+                # Set state in new_data
+                mj.mj_setState(model, new_data, state, mj.mjtState.mjSTATE_FULLPHYSICS)
+
+                # Step simulation
                 for _ in range(n_substeps):
-                    data.ctrl = ctrl.copy()
-                    mj.mj_step(model, data)
-                return data
+                    new_data.ctrl[:] = ctrl
+                    mj.mj_step(model, new_data)
+
+                return new_data
             self._step_fn = lambda data, ctrl, model=self.mjx_model, n_substeps=self.n_substeps: mj_step(
                 model, data, ctrl, n_substeps
             )
@@ -295,8 +300,8 @@ class SwappableBase(mjx_env.MjxEnv):
         rewards,
         metrics
     ) -> tuple[jax.Array, dict[str, jax.Array]]:
-        rewards = {k: v * self.params.reward.weights[k] for k, v in rewards.items()}
-        reward = sum(rewards.values())
+        _rewards = {k: v * self.params.reward.weights[k] for k, v in rewards.items()}
+        reward = sum(_rewards.values())
         
         metrics = self.get_metrics(metrics, rewards)
 

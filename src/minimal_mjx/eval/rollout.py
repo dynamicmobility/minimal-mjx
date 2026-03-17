@@ -33,21 +33,12 @@ def rollout_policy(
     show_progress = True,
     camera        = None,
 ) -> tuple[list, plotting.RewardPlotter, plotting.MujocoPlotter, plotting.InfoPlotter]:
-    def infer_frame_dim(
-        mj_model, width, height
-    ):
-        if width is None:
-            width = mj_model.vis.global_.offwidth
-        if height is None:
-            height = mj_model.vis.global_.offheight
-        
-        return width, height
-    width, height = infer_frame_dim(env.mj_model, width, height)
+    width, height = plotting.infer_frame_dim(env.mj_model, width, height)
     step, reset = mm.learning.inference.get_step_reset(env)
 
     # Set up the environment
     rng = jax.random.PRNGKey(np.random.randint(0, 100000))
-    state: mm.MujocoState = reset(rng)
+    state: mm.EnvState = reset(rng)
     
     # Initialize the state
     initial_info = state.info | info_init_fn(state)

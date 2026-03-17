@@ -47,7 +47,7 @@ def get_subplot_grid(n: int) -> tuple[int, int]:
     return nrows, ncols
 
 
-def get_mj_scene_option(contacts: bool = True, perts: bool = True, com: bool = True,
+def get_mj_scene_option(contacts: bool = False, perts: bool = False, com: bool = False,
                         geomgroup2: bool = True, geomgroup3: bool = False) -> mujoco.MjvOption:
     """Create an MjvOption with common visualization flags toggled."""
     scene_option = mujoco.MjvOption()
@@ -68,6 +68,16 @@ def add_text_to_frame(pixels: np.ndarray, text: str, org: tuple[int, int],
         size, color, thickness, cv2.LINE_AA,
     )
     return pixels
+
+def infer_frame_dim(
+        mj_model, width, height
+    ):
+    if width is None:
+        width = mj_model.vis.global_.offwidth
+    if height is None:
+        height = mj_model.vis.global_.offheight
+    
+    return width, height
 
 
 # ---------------------------------------------------------------------------

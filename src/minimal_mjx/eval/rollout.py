@@ -14,7 +14,7 @@ def make_dummy_inference_fn(env: mm.envs.SwappableBase, mode='zero'):
         case 'zero':
             inference_fn = lambda obs, rng: (np.zeros(env.action_size), None)
         case 'random':
-            inference_fn = lambda obs, rng: (2 * np.random.random(env.action_size) - 1, None)
+            inference_fn = lambda obs, rng, size=env.action_size: (2 * np.random.random(size) - 1, None)
         case _:
             raise Exception(f'Unknown inference type {mode}')
 

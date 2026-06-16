@@ -47,7 +47,7 @@ def save_config(config, path):
         yaml.dump(config, file, Dumper=FlowSeqDumper, default_flow_style=False)
 
 
-def get_commit_hash():
+def get_commit_hash(warn=True):
     import subprocess
 
     try:
@@ -60,7 +60,7 @@ def get_commit_hash():
             ['git', 'status', '--porcelain']
         ).decode('utf-8').strip()
 
-        if status_output:
+        if status_output and warn:
             input("⚠️ Warning: There are unadded or uncommitted changes in the repository. Press ENTER to continue...")
 
         return commit_hash

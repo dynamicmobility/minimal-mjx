@@ -36,9 +36,7 @@ class SwappableBase(mjx_env.MjxEnv):
         super().__init__(env_params)
         self.params = env_params
         self._xml_path = xml_path.as_posix()
-        # self._mj_model = mj.MjModel.from_xml_path(
-        #     self._xml_path, common.get_assets()
-        # )
+
         self._spec = mj.MjSpec.from_file(
             filename=self._xml_path, 
             assets=common.get_assets()
@@ -46,7 +44,6 @@ class SwappableBase(mjx_env.MjxEnv):
         self._mj_model: mj.MjModel = self._spec.compile()
         self._mj_model.opt.timestep = self.params.sim_dt
         self._mj_model.opt.timestep = self.sim_dt
-        self._backend = backend # Store backend so swappable backend can be re-initialized when model changes
 
         self.setup_swappable_backend(backend)
         
@@ -358,8 +355,3 @@ class SwappableBase(mjx_env.MjxEnv):
     @property
     def spec(self) -> mj.MjSpec:
         return self._spec
-    
-    def recompile(self):
-        """if spec is edited, update the environment's mj_model and mjx_model"""
-        self._mj_model = self._spec.compile()
-        self.setup_swappable_backend(self._backend) # Once model is updated, data_init_fn also needs to be updated

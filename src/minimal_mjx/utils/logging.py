@@ -1,28 +1,14 @@
 import wandb
 from brax.training import checkpoint
 from pathlib import Path
-from minimal_mjx.utils.config import read_config, save_config, get_commit_hash
+from minimal_mjx.utils.config import read_config, save_config
 from brax.training.agents.ppo.checkpoint import _CONFIG_FNAME
 from ml_collections.config_dict import ConfigDict
-import os
 
 
 def initialize_wandb(entity='njanwani-gatech', project='prefMORL', name='test', config={}, **kwargs):
     """Initialize and return a new W&B run."""
     return wandb.init(entity=entity, project=project, name=name, config=config, **kwargs)
-
-def begin_training_log(config):
-    # Make training directory
-    output_dir = Path(config['save_dir']) / config['name']
-    os.makedirs(output_dir, exist_ok=config['name'] == 'test')
-
-    # Save config in directory
-    config_save_path = Path(output_dir) / 'config.yaml'
-    if config.name != 'test':
-        git_hash = get_commit_hash()
-        config.git_hash = git_hash
-    save_config(config, config_save_path)
-
 
 def save_model(current_step, make_policy, params, network_config, output_dir: Path, run: wandb.Run = None):
     """Save a Brax checkpoint and optionally log it as a W&B artifact."""

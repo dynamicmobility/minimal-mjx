@@ -1,6 +1,7 @@
 name: test
 save_dir: example/results/cheetah
 description: ""
+algorithm: ppo
 env: Cheetah
 backend: np # jnp or np. Always uses jnp for training
 env_config:

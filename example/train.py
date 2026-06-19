@@ -21,11 +21,10 @@ else:
         project = 'project-name'
     )
 
-# Setup logging and begin training
-mm.utils.logging.begin_training_log(train_config)
+# Begin training (the run directory and config are created inside train)
 mm.learning.train(
-    config_yaml=train_config, 
-    env=env, 
-    eval_env=env, 
+    config=train_config,
+    env=env,
+    eval_env=env,
     run=run
 )

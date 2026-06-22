@@ -57,6 +57,7 @@ class SwappableBase(mjx_env.MjxEnv):
                 
     def setup_swappable_backend(self, backend: str):
         """Sets up the backend for the environment."""
+        self.backend = backend
         if backend == 'jnp':
             # Setup JAX backend
             self._np = jnp

@@ -6,9 +6,26 @@ from brax.training.agents.ppo.checkpoint import _CONFIG_FNAME
 from ml_collections.config_dict import ConfigDict
 
 
+def _flatten_config(config, parent_key='', sep='/'):
+    """Flatten a nested (dict-like) config so every leaf is keyed by its path, joined by `sep`."""
+    items = {}
+    for key, value in config.items():
+        new_key = f'{parent_key}{sep}{key}' if parent_key else str(key)
+        if hasattr(value, 'items'):
+            items.update(_flatten_config(value, new_key, sep=sep))
+        else:
+            items[new_key] = value
+    return items
+
 def initialize_wandb(entity='njanwani-gatech', project='prefMORL', name='test', config={}, **kwargs):
     """Initialize and return a new W&B run."""
-    return wandb.init(entity=entity, project=project, name=name, config=config, **kwargs)
+    return wandb.init(
+        entity    = entity,
+        project   = project,
+        name      = name,
+        config    = _flatten_config(config),
+        **kwargs
+    )
 
 def save_model(current_step, make_policy, params, network_config, output_dir: Path, run: wandb.Run = None):
     """Save a Brax checkpoint and optionally log it as a W&B artifact."""

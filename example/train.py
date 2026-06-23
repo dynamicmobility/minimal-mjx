@@ -18,7 +18,8 @@ else:
     run = mm.utils.logging.initialize_wandb(
         name    = name.replace('/', ''),
         entity  = 'entity-name',
-        project = 'project-name'
+        project = 'project-name',
+        config  = train_config
     )
 
 # Begin training (the run directory and config are created inside train)

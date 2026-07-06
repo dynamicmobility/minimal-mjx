@@ -10,7 +10,6 @@ import cv2
 import h5py
 import pandas as pd
 import time
-import wandb
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.figure as mfig
@@ -189,15 +188,20 @@ class RewardPlotter:
 
 def plot_progress(
     num_steps,
-    metrics, 
-    times, 
-    x_data, 
-    y_data, 
-    y_dataerr, 
-    ppo_params, 
+    metrics,
+    times,
+    x_data,
+    y_data,
+    y_dataerr,
+    ppo_params,
     save_dir,
     run=None
 ):
+    """Brax PPO progress callback: accumulate eval reward, log native W&B lines.
+
+    Logs every scalar brax metric via ``run.log`` so each renders as a native,
+    interactive W&B line chart, and writes the raw curve to ``progress.csv``.
+    """
     print('=== TRAINING EPOCH ===')
     print('time', time.time())
     print('num_steps', num_steps)
@@ -218,28 +222,18 @@ def plot_progress(
         index=False
     )
 
-    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
-    ax.set_xlim([0, ppo_params["num_timesteps"] * 1.25])
-    ax.set_xlabel("# environment steps")
-    ax.set_ylabel("reward per episode")
-    y_data = np.array(y_data)
-    y_dataerr = np.array(y_dataerr)
-    if np.nan in y_data or np.nan in y_dataerr:
+    if np.isnan(np.asarray(y_data, dtype=float)).any() \
+            or np.isnan(np.asarray(y_dataerr, dtype=float)).any():
         raise Exception(f'NaN found... \n\n{y_data}\n\n{y_dataerr}')
 
-    ax.errorbar(x_data, y_data, yerr=y_dataerr)
-    ax.scatter(x_data, y_data)
-
-    save_dir = save_dir / 'progress.svg'
-    plt.savefig(save_dir)
     if run:
-        with open(save_dir, "r") as f:
-            svg = f.read()
-        run.log(
-            {"reward_plot": wandb.Html(svg)},
-            step=num_steps,
-        )
-        
+        # Log every scalar brax metric so each gets a native line chart.
+        scalars = {
+            k: float(v) for k, v in metrics.items()
+            if np.ndim(v) == 0 and not isinstance(v, str)
+        }
+        run.log(scalars, step=num_steps)
+
 # ---------------------------------------------------------------------------
 # I/O helpers
 # ---------------------------------------------------------------------------

@@ -10,15 +10,15 @@ train_config = mm.utils.read_config()
 env, env_cfg = create_environment(train_config, for_training=True)
 
 # Initialize Weights and Biases Run object (if you want to use it)
-USE_WANDB = False
+USE_WANDB = True
 if not USE_WANDB:
     run = None
 else:
     name = train_config['save_dir'] + '/' + train_config['name']
     run = mm.utils.logging.initialize_wandb(
         name    = name.replace('/', ''),
-        entity  = 'entity-name',
-        project = 'project-name',
+        entity  = 'njanwani-gatech',
+        project = 'my-awesome-project-2',
         config  = train_config
     )
 

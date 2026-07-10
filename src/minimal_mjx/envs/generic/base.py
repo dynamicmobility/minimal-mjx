@@ -76,11 +76,11 @@ class SwappableBase(mjx_env.MjxEnv):
                 model, data, ctrl, self.n_substeps
             )
 
-            def mjx_data_init_fn(qpos, qvel, ctrl, time, xfrc_applied) -> mjx.Data:
+            def mjx_data_init_fn(qpos, qvel, ctrl, time, xfrc_applied, model=self._mjx_model) -> mjx.Data:
                 data = mjx_env.init(
-                    self._mjx_model, qpos=qpos, qvel=qvel, ctrl=ctrl
+                    model, qpos=qpos, qvel=qvel, ctrl=ctrl
                 ).replace(time=time, xfrc_applied=xfrc_applied)
-                data = mjx.forward(self._mjx_model, data)
+                data = mjx.forward(model, data)
                 return data.replace(ctrl=ctrl)
 
             self._data_init_fn = mjx_data_init_fn
@@ -122,19 +122,19 @@ class SwappableBase(mjx_env.MjxEnv):
                     return false_fn(operand)
             self._cond = cond
 
-            def init_data(model, time, qpos, qvel, ctrl, xfrc_applied):
+            def init_data(time, qpos, qvel, ctrl, xfrc_applied, model):
                 data = mj.MjData(model)
                 data.time = time
                 data.qpos = qpos
                 data.qvel = qvel
                 data.ctrl = ctrl
                 data.xfrc_applied = xfrc_applied
-                mj.mj_forward(self.mj_model, data)
+                mj.mj_forward(model, data)
                 data.ctrl = ctrl
 
                 return data
-            self._data_init_fn = lambda time, qpos, qvel, ctrl, xfrc_applied: init_data(
-                self._mj_model, time, qpos, qvel, ctrl, xfrc_applied
+            self._data_init_fn = lambda time, qpos, qvel, ctrl, xfrc_applied, model=self._mj_model: init_data(
+                time, qpos, qvel, ctrl, xfrc_applied, model
             )
 
             def mj_step(model, old_data, ctrl, n_substeps):
@@ -156,7 +156,7 @@ class SwappableBase(mjx_env.MjxEnv):
                     mj.mj_step(model, new_data)
 
                 return new_data
-            self._step_fn = lambda data, ctrl, model=self.mjx_model, n_substeps=self.n_substeps: mj_step(
+            self._step_fn = lambda data, ctrl, model=self._mj_model, n_substeps=self.n_substeps: mj_step(
                 model, data, ctrl, n_substeps
             )
             
@@ -199,41 +199,14 @@ class SwappableBase(mjx_env.MjxEnv):
         qpos = self._set_val_fn(qpos, val, min_idx=self.qpos_free, max_idx=None)
         return qpos
 
-    def reset(
-        self,
-        rng: jax.Array,
-        data: mjx.Data,
-        history_length: int,
-        num_resets: int = 0
-    ) -> mjx_env.State:
+    @abstractmethod
+    def reset(self, rng: jax.Array) -> mjx_env.State:
         """Resets the environment to an initial state. Takes in a random key
-        (rng) as input and outputs the first state of the environment."""
-
-        # Initialize history buffers
-        qpos_history       = self._np.zeros((history_length, self.nq))
-        qvel_history       = self._np.zeros((history_length, self.nv))
-        act_history        = self._np.zeros((history_length, self.action_size))
-
-        # Set a simple info dict...
-        info = {
-            # Random variable
-            'rng':                rng,
-            
-            # Basic proprioception
-            'act_history':        act_history,
-            'qpos_history':       qpos_history,
-            'qvel_history':       qvel_history,
-            'num_resets':         num_resets + 1
-        }
-
-        reward, done = self._np.zeros(2)
-        obs, metrics = self._np.array([]), {}
-        state = self._state_init_fn(data, obs, reward, done, metrics, info)
-
-        return state
+        (rng) as input and outputs the initial state of the environment."""
+        raise NotImplementedError()
     
     @abstractmethod
-    def step(self, state, action):
+    def step(self, state: mjx_env.State, action: jax.Array) -> mjx_env.State:
         """Steps the environment with an action outputted by the policy network.
         This function is run after policy evaluations and returns an Markov Decision
         Process state, which includes the observation for the next policy evaluation."""
@@ -241,10 +214,7 @@ class SwappableBase(mjx_env.MjxEnv):
     
     @abstractmethod
     def reward_function(
-        data,
-        action,
-        info,
-        done
+        self, data: mjx.Data, action: jax.Array, info: dict, done: bool
     ):
         """Returns reward terms as a dictionary ({name: reward value}). These
         rewards are then summed in a weighted fashion based on their name and the
@@ -257,11 +227,7 @@ class SwappableBase(mjx_env.MjxEnv):
         raise NotImplementedError()
     
     @abstractmethod
-    def _get_obs(
-        self,
-        data,
-        info
-    ):
+    def _get_obs(self, data: mjx.Data, info: dict):
         """Returns the observation given the data and info."""
         raise NotImplementedError()
     

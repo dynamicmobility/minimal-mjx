@@ -47,9 +47,20 @@ _ALGO_HANDLERS = {
 
 
 def create_training_directory(config, warn_github_changes=True):
-    """Create the run output directory and save the resolved config alongside it."""
+    """Create the run output directory and save the resolved config alongside it.
+
+    If the directory already exists but only contains a stale config file,
+    reuse it and overwrite that config in place.
+    """
     output_dir = Path(config['save_dir']) / config['name']
-    os.makedirs(output_dir, exist_ok=config['name'] == 'test')
+    if output_dir.exists():
+        contents = list(output_dir.iterdir())
+        if config['name'] != 'test' and not (
+            len(contents) == 1 and contents[0].is_file() and contents[0].name == 'config.yaml'
+        ):
+            raise FileExistsError(f"Training directory already exists: {output_dir}")
+    else:
+        output_dir.mkdir(parents=True, exist_ok=True)
 
     config_save_path = Path(output_dir) / 'config.yaml'
     if config.name != 'test':

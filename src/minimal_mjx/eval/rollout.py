@@ -23,7 +23,7 @@ def make_dummy_inference_fn(env: mm.envs.SwappableBase, mode='zero'):
 def rollout_policy(
     inference_fn,
     env           : MjxEnv,
-    T             = 10.0,
+    n_steps       = 100,
     info_init_fn  = lambda state: state.info,
     info_step_fn  = lambda state: state.info,
     info_plot_key = None,
@@ -51,7 +51,7 @@ def rollout_policy(
     data_plotter.add_row(state.data)
 
     # Rollout and record data
-    N = int(T / env.dt)
+    N = int(n_steps)
     traj = [state]
     for i in tqdm(range(N), disable=not show_progress):
         ctrl, _ = inference_fn(state.obs, rng)
@@ -78,4 +78,4 @@ def rollout_policy(
         )
     else:
         frames = None
-    return frames, reward_plotter, data_plotter, info_plotter
+    return frames, traj, reward_plotter, data_plotter, info_plotter

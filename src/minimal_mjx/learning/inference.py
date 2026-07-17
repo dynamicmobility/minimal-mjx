@@ -33,9 +33,12 @@ def get_last_model(config: Dict[str, Any]) -> Path:
     model_files = get_all_models(config, sort=True)
     return model_files[-1]
 
-def load_policy(config: Dict[str, Any], deterministic: bool = True) -> Callable:
+def load_policy(config: Dict[str, Any], deterministic: bool = True, checkpoint_path = None) -> Callable:
     """Load and return a policy from the last model checkpoint."""
-    path = get_last_model(config)
+    if checkpoint_path is None:
+        path = get_last_model(config)
+    else:
+        path = Path(checkpoint_path)
     print(f'Loading model at {path.as_posix()}')
     policy = checkpoint.load_policy(
         path.resolve(),

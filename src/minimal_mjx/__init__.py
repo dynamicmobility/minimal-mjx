@@ -35,6 +35,7 @@ from .utils import (
     setup_gpu,
     setup_intel_gpu,
     setup_XLA_Triton,
+    deepcopy_config
 )
 from .envs import SwappableBase
 from .eval import (
@@ -75,6 +76,7 @@ __all__ = [
     "download_model",
     "get_batch_shape",
     "get_commit_hash",
+    "deepcopy_config",
     "get_mj_scene_option",
     "get_subplot_grid",
     "infer_frame_dim",

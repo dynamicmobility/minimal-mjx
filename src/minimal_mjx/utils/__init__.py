@@ -6,6 +6,7 @@ from .config import (
     read_config,
     read_yaml,
     save_config,
+    deepcopy_config
 )
 from .logging import download_model, initialize_wandb, save_model
 from .plotting import (
@@ -46,6 +47,7 @@ __all__ = [
     "read_config",
     "read_yaml",
     "save_config",
+    "deepcopy_config",
     "download_model",
     "initialize_wandb",
     "save_model",

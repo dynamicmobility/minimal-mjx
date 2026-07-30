@@ -1,6 +1,7 @@
 import yaml
 import sys
 from ml_collections import config_dict
+import copy
 
 class FlowSeqDumper(yaml.Dumper):
     def represent_sequence(self, tag, sequence, flow_style=None):
@@ -68,3 +69,6 @@ def get_commit_hash(warn=True):
     except subprocess.CalledProcessError as e:
         print(f"Error getting commit hash: {e}")
         return None
+    
+def deepcopy_config(config: config_dict.ConfigDict):
+    return copy.deepcopy(config)

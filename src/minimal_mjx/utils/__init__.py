@@ -8,6 +8,7 @@ from .config import (
     save_config,
     deepcopy_config
 )
+from .delete_failed_runs import delete_failed_runs
 from .logging import download_model, initialize_wandb, save_model
 from .plotting import (
     InfoPlotter,
@@ -48,6 +49,7 @@ __all__ = [
     "read_yaml",
     "save_config",
     "deepcopy_config",
+    "delete_failed_runs",
     "download_model",
     "initialize_wandb",
     "save_model",

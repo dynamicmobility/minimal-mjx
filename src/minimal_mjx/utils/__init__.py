@@ -9,7 +9,14 @@ from .config import (
     deepcopy_config
 )
 from .delete_failed_runs import delete_failed_runs
-from .logging import download_model, initialize_wandb, save_model
+from .logging import (
+    download_model,
+    initialize_wandb,
+    save_model,
+    flatten_config,
+    unflatten_config,
+    get_latest_artifact,
+)
 from .plotting import (
     InfoPlotter,
     MujocoPlotter,
@@ -48,9 +55,12 @@ __all__ = [
     "read_config",
     "read_yaml",
     "save_config",
+    "flatten_config",
+    "unflatten_config",
     "deepcopy_config",
     "delete_failed_runs",
     "download_model",
+    "get_latest_artifact",
     "initialize_wandb",
     "save_model",
     "InfoPlotter",

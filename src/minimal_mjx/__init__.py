@@ -36,7 +36,10 @@ from .utils import (
     setup_gpu,
     setup_intel_gpu,
     setup_XLA_Triton,
-    deepcopy_config
+    deepcopy_config,
+    flatten_config,
+    unflatten_config,
+    get_latest_artifact,
 )
 from .envs import SwappableBase
 from .eval import (
@@ -88,6 +91,9 @@ __all__ = [
     "plot_progress",
     "read_config",
     "read_yaml",
+    "flatten_config",
+    "unflatten_config",
+    "get_latest_artifact",
     "run_setup",
     "save_config",
     "save_metrics",

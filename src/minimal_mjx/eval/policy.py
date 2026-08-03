@@ -4,7 +4,7 @@ import jax
 import jax.numpy as jnp
 from minimal_mjx.utils.state import get_batch_shape
 
-def make_zero_policy(action_size: int):
+def make_zero_policy(action_size: int, **kwargs):
     """Open-loop policy that always emits zero actions."""
 
     def policy(obs, key, t):
@@ -14,7 +14,7 @@ def make_zero_policy(action_size: int):
     return policy
 
 
-def make_random_policy(action_size: int):
+def make_random_policy(action_size: int, **kwargs):
     """Open-loop policy that emits uniform random actions in ``[-1, 1]``."""
 
     def policy(obs, key, t):
@@ -31,7 +31,7 @@ def make_random_policy(action_size: int):
 
 
 def make_sinusoidal_policy(
-    action_size: int, amp: float = 0.8, freq: float = 1.5, phases=None
+    action_size: int, amp: float = 0.8, freq: float = 1.5, phases=None, **kwargs
 ):
     """Open-loop sinusoid ``amp * sin(2*pi*freq*t + phases)``, identical across envs.
     """

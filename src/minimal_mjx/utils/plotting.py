@@ -59,9 +59,17 @@ def get_mj_scene_option(contacts: bool = False, perts: bool = False, com: bool =
 
 
 def add_text_to_frame(pixels: np.ndarray, text: str, org: tuple[int, int],
-                      size: int = 1, thickness: int = 2,
-                      color: tuple[int, int, int] = (255, 255, 255)) -> np.ndarray:
-    """Overlay white text on a frame (in-place) and return it."""
+                      size: float = 1, thickness: int = 2,
+                      color: tuple[int, int, int] = (255, 255, 255),
+                      outline_color: tuple[int, int, int] | None = (0, 0, 0),
+                      outline_thickness: int = 2) -> np.ndarray:
+    """Overlay text on a frame (in-place) and return it.
+    """
+    if outline_color is not None and outline_thickness > 0:
+        cv2.putText(
+            pixels, text, org, cv2.FONT_HERSHEY_SIMPLEX,
+            size, outline_color, thickness + 2 * outline_thickness, cv2.LINE_AA,
+        )
     cv2.putText(
         pixels, text, org, cv2.FONT_HERSHEY_SIMPLEX,
         size, color, thickness, cv2.LINE_AA,

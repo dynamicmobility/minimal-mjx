@@ -13,6 +13,15 @@ def make_zero_policy(action_size: int, **kwargs):
 
     return policy
 
+def make_const_policy(action_size: int, value: float = 0.0, **kwargs):
+    """Open-loop policy that always emits a constant action."""
+
+    def policy(obs, key, t):
+        batch_shape = get_batch_shape(obs)
+        return value*jnp.ones((*batch_shape, action_size)), {}
+
+    return policy
+
 
 def make_random_policy(action_size: int, **kwargs):
     """Open-loop policy that emits uniform random actions in ``[-1, 1]``."""
@@ -61,6 +70,7 @@ def from_inference_fn(base_policy):
 
 OPEN_LOOP = {
     "zero": make_zero_policy,
+    "const": make_const_policy,
     "random": make_random_policy,
     "sinusoid": make_sinusoidal_policy,
 }

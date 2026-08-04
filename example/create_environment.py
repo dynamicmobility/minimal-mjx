@@ -2,7 +2,7 @@ import minimal_mjx as mm
 
 def create_environment(config, for_training=False, **env_kwargs):
     env_params = mm.utils.config.create_config_dict(config['env_config'])
-    backend = 'jnp' if for_training else config['backend']
+    backend = 'jax' if for_training else config['backend']
     common_kwargs = {
         'backend': backend,
         'env_params': env_params

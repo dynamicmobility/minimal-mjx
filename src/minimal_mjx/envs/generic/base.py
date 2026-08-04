@@ -17,7 +17,7 @@ class SwappableBase(mjx_env.MjxEnv):
     def __init__(self,
             xml_path: Path,
             env_params: config_dict.ConfigDict,
-            backend = 'jnp',
+            backend = 'jax',
             num_free = 3
         ):
         """Initializes the base "swappable" MJX environment for RL training and 
@@ -31,7 +31,7 @@ class SwappableBase(mjx_env.MjxEnv):
             xml_path: Path to the XML file defining the robot and environment.
             config: Configuration dictionary for the environment.
             config_overrides: Optional dictionary to override specific config values.
-            backend: Backend to use for computations, either 'jnp' for JAX or 'np' for NumPy.
+            backend: Backend to use for computations, 'jax' for MJX-JAX, 'warp' for MJX-Warp, or 'np' for NumPy.
         """
         super().__init__(env_params)
         self.params = env_params
@@ -58,7 +58,7 @@ class SwappableBase(mjx_env.MjxEnv):
     def setup_swappable_backend(self, backend: str):
         """Sets up the backend for the environment."""
         self.backend = backend
-        if backend == 'jnp':
+        if backend == 'jax' or backend == 'warp':
             # Setup JAX backend
             self._np = jnp
             self._mj = mjx
@@ -70,18 +70,34 @@ class SwappableBase(mjx_env.MjxEnv):
             self._cond = lambda cond, true_fn, false_fn, operand: jax.lax.cond(
                 cond, true_fn, false_fn, operand
             )
-            self._mjx_model = mjx.put_model(self._mj_model)
+            self._mjx_model = mjx.put_model(self._mj_model, impl=backend)
 
             self._step_fn = lambda data, ctrl, model=self._mjx_model: mjx_env.step(
                 model, data, ctrl, self.n_substeps
             )
+            # In the latest update, the model passed into make_data should be the CPU model, not the mjx model.
+            if(backend == 'warp'):
+                def mjx_data_init_fn(qpos, qvel, ctrl, time, xfrc_applied, model=self._mj_model) -> mjx.Data:
+                    backend_params = self.params['backend_params']
+                    nconmax = backend_params['nconmax']
+                    nworld = backend_params['nworld']
+                    njmax = backend_params['njmax']
+                    naccdmax = backend_params['naccdmax']
+                    _mjx_model = mjx.put_model(model, impl=backend)
+                    data = mjx_env.make_data(
+                        model, qpos=qpos, qvel=qvel, ctrl=ctrl, impl="warp", naconmax=nconmax*nworld, njmax=njmax
+                    ).replace(time=time, xfrc_applied=xfrc_applied)
+                    data = mjx.forward(_mjx_model, data)
+                    return data.replace(ctrl=ctrl)
 
-            def mjx_data_init_fn(qpos, qvel, ctrl, time, xfrc_applied, model=self._mjx_model) -> mjx.Data:
-                data = mjx_env.init(
-                    model, qpos=qpos, qvel=qvel, ctrl=ctrl
-                ).replace(time=time, xfrc_applied=xfrc_applied)
-                data = mjx.forward(model, data)
-                return data.replace(ctrl=ctrl)
+            elif(backend == 'jax'):
+                def mjx_data_init_fn(qpos, qvel, ctrl, time, xfrc_applied, model=self._mj_model) -> mjx.Data:
+                    data = mjx_env.make_data(
+                        model, qpos=qpos, qvel=qvel, ctrl=ctrl, impl="jax"
+                    ).replace(time=time, xfrc_applied=xfrc_applied)
+                    _mjx_model = mjx.put_model(model, impl=backend)
+                    data = mjx.forward(_mjx_model, data)
+                    return data.replace(ctrl=ctrl)
 
             self._data_init_fn = mjx_data_init_fn
 

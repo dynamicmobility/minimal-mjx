@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Sequence
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import cv2
 import h5py
@@ -211,7 +212,7 @@ def plot_progress(
     interactive W&B line chart, and writes the raw curve to ``progress.csv``.
     """
     print('=== TRAINING EPOCH ===')
-    print('time', time.time())
+    print('time',datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %H:%M:%S %Z") )
     print('num_steps', num_steps)
     print('total steps', ppo_params["num_timesteps"])
     times.append(datetime.now())

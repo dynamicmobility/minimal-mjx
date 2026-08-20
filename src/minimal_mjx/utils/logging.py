@@ -1,7 +1,7 @@
 import wandb
 from brax.training import checkpoint
 from pathlib import Path
-from minimal_mjx.utils.config import read_config, save_config
+from minimal_mjx.utils.config import create_config_dict, read_config, save_config
 from brax.training.agents.ppo.checkpoint import _CONFIG_FNAME
 from ml_collections.config_dict import ConfigDict
 
@@ -82,20 +82,26 @@ def get_latest_artifact(run: wandb.apis.public.Run, prefix: str) -> wandb.Artifa
 
 
 def download_model(run_id: str, save_dir: Path | str, model_name: str,
-                   entity: str = 'njanwani-gatech', project: str = 'prefMORL') -> str:
-    """Download config and policy checkpoint artifacts for a W&B run."""
+                   entity: str, project: str, prefix: str) -> str:
+    """Download config and policy checkpoint artifacts for a W&B run.
+    Model name takes contains `prefix`, or raise ValueError."""
     output_dir = Path(save_dir)
     api = wandb.Api()
     run = api.run(f'{entity}/{project}/{run_id}')
 
-    config_artifact = get_latest_artifact(run, 'config')
-    artifact_dir = config_artifact.download(root=output_dir / model_name)
-    config: ConfigDict = read_config(Path(artifact_dir) / 'config.yaml')
+    try:
+        config_artifact = get_latest_artifact(run, 'config')
+    except ValueError:
+        config: ConfigDict = create_config_dict(unflatten_config(run.config))
+    else:
+        artifact_dir = config_artifact.download(root=output_dir / model_name)
+        config: ConfigDict = read_config(Path(artifact_dir) / 'config.yaml')
     config['save_dir'] = str(output_dir)
     config['name'] = str(model_name)
+    (output_dir / model_name).mkdir(parents=True, exist_ok=True)
     save_config(config, output_dir / model_name / 'config.yaml')
 
-    policy_artifact = get_latest_artifact(run, 'hypernetworks')
+    policy_artifact = get_latest_artifact(run, prefix)
     artifact_dir = policy_artifact.download(
         root=str(output_dir / model_name / str(policy_artifact.metadata['iteration']))
     )

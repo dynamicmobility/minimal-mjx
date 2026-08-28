@@ -1,5 +1,7 @@
 # MINIMAL-MJX
 
+Note that this README is a bit old, so some information may be inaccurate.
+
 This repository represents starter code for MJX-based RL from the Dynamic Mobility
 Lab. The code has been built of off MuJoCo Playground and tailored to make
 policy training, saving, and evaluation easy and implements some nice-to-haves.

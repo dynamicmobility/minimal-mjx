@@ -237,10 +237,12 @@ def plot_progress(
 
     if run:
         # Log every scalar brax metric so each gets a native line chart.
-        scalars = {
-            k: float(v) for k, v in metrics.items()
-            if np.ndim(v) == 0 and not isinstance(v, str)
-        }
+        scalars = {}
+        for k, v in metrics.items():
+            try:
+                scalars[k] = float(v)
+            except (TypeError, ValueError):
+                continue
         run.log(scalars, step=num_steps)
 
 # ---------------------------------------------------------------------------

@@ -1,9 +1,15 @@
 import wandb
 from brax.training import checkpoint
 from pathlib import Path
+from typing import Any
 from minimal_mjx.utils.config import create_config_dict, read_config, save_config
 from brax.training.agents.ppo.checkpoint import _CONFIG_FNAME
 from ml_collections.config_dict import ConfigDict
+from orbax import checkpoint as ocp
+
+# Names, inside a run directory, of the state a continued run reads back.
+TRAIN_STATE_DIRNAME = 'training_state'
+RUN_ID_FNAME = 'wandb_run_id.txt'
 
 
 def flatten_config(config, parent_key='', sep='/'):
@@ -69,6 +75,43 @@ def save_model(current_step, make_policy, params, network_config, output_dir: Pa
         artifact.add_dir((output_dir / f'{current_step:012d}').resolve())
         artifact.metadata['iteration'] = current_step
         run.log_artifact(artifact)
+
+def save_training_state(output_dir: Path, step: int, state: Any) -> None:
+    """Overwrite the run's learner state, so a continued run picks up mid-stream.
+    # TODO: clean up this docstring
+    A brax checkpoint holds what inference needs -- the policy's params and the
+    observation normalizer. Training also depends on the optimizer's moments and on
+    networks the policy never runs, such as a value function, so those are written here
+    instead. Only the newest state is kept, since a run continues where it stopped.
+    """
+    ocp.PyTreeCheckpointer().save(
+        (Path(output_dir) / TRAIN_STATE_DIRNAME).resolve(), (step, state), force=True
+    )
+
+
+def load_training_state(output_dir: Path, like: Any) -> tuple[int, Any] | None:
+    """`(step, state)` restored into `like`'s pytree, or None if the run saved none.
+
+    `like` is a freshly built state: orbax fills its arrays, so the restored state has
+    the same tree structure, shapes and dtypes by construction.
+    """
+    path = (Path(output_dir) / TRAIN_STATE_DIRNAME).resolve()
+    if not path.exists():
+        return None
+    return ocp.PyTreeCheckpointer().restore(path, item=(0, like))
+
+
+def save_run_id(output_dir: Path, run: wandb.Run | None) -> None:
+    """Record which W&B run wrote `output_dir`, for a later job to continue it."""
+    if run is not None:
+        (Path(output_dir) / RUN_ID_FNAME).write_text(str(run.id))
+
+
+def load_run_id(output_dir: Path) -> str | None:
+    """The W&B run id a previous job left in `output_dir`, or None."""
+    path = Path(output_dir) / RUN_ID_FNAME
+    return path.read_text().strip() if path.exists() else None
+
 
 def get_latest_artifact(run: wandb.apis.public.Run, prefix: str) -> wandb.Artifact:
     """Return the last-logged artifact of `run` whose name contains `prefix`, or raise ValueError."""

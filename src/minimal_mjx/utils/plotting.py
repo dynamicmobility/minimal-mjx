@@ -195,6 +195,26 @@ class RewardPlotter:
         axs[len(self.axdata)].plot(self.rewards)
         return fig, axs
 
+def load_progress(save_dir, times, x_data, y_data, y_dataerr, before=None) -> None:
+    """Refill `plot_progress`'s curves from the `progress.csv` a previous job wrote.
+
+    The callback rewrites the file from these lists on every eval, so a continued run
+    that started them empty would drop the epochs it inherited. `before` is the step it
+    restarts from: rows at or past it are left out, the run evaluating that state again
+    as its own first row.
+    """
+    path = Path(save_dir) / 'progress.csv'
+    if not path.exists():
+        return
+    frame = pd.read_csv(path)
+    if before is not None:
+        frame = frame[frame['x'] < before]
+    times.extend(pd.to_datetime(frame['times']).tolist())
+    x_data.extend(frame['x'].tolist())
+    y_data.extend(frame['y'].tolist())
+    y_dataerr.extend(frame['yerr'].tolist())
+
+
 def plot_progress(
     num_steps,
     metrics,

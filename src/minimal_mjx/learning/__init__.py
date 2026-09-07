@@ -6,7 +6,15 @@ from .inference import (
     get_step_reset,
     load_policy,
 )
-from .training import create_training_directory, setup_ppo, train
+from .training import (
+    Resume,
+    apply_resume,
+    create_training_directory,
+    find_checkpoints,
+    find_resume,
+    setup_ppo,
+    train,
+)
 
 __all__ = [
     "inference",
@@ -16,7 +24,11 @@ __all__ = [
     "get_params",
     "get_step_reset",
     "load_policy",
+    "Resume",
+    "apply_resume",
     "create_training_directory",
+    "find_checkpoints",
+    "find_resume",
     "setup_ppo",
     "train",
 ]

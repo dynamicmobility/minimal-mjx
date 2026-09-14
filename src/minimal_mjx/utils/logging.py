@@ -124,10 +124,37 @@ def get_latest_artifact(run: wandb.apis.public.Run, prefix: str) -> wandb.Artifa
     return matches[-1]
 
 
+def get_earliest_artifact(
+    run: wandb.apis.public.Run, prefix: str, iterations: float
+) -> wandb.Artifact:
+    """Return the first artifact of `run` matching `prefix` written at or past
+    `iterations` training steps, or raise ValueError.
+
+    A checkpoint artifact records the step it was written at in `metadata['iteration']`,
+    so the choice is made from the run's artifact listing without downloading any of them.
+    """
+    matches = [
+        artifact for artifact in run.logged_artifacts()
+        if prefix in artifact.name and 'iteration' in artifact.metadata
+    ]
+    past = [a for a in matches if a.metadata['iteration'] >= iterations]
+    if not past:
+        raise ValueError(
+            f"No '{prefix}' artifact at or past {iterations:.0f} iterations for run "
+            f"{run.id}. Logged iterations: "
+            f"{sorted(a.metadata['iteration'] for a in matches) or 'none'}"
+        )
+    return min(past, key=lambda a: a.metadata['iteration'])
+
+
 def download_model(run_id: str, save_dir: Path | str, model_name: str,
-                   entity: str, project: str, prefix: str) -> str:
+                   entity: str, project: str, prefix: str,
+                   iterations: float | None = None) -> str:
     """Download config and policy checkpoint artifacts for a W&B run.
-    Model name takes contains `prefix`, or raise ValueError."""
+    Model name takes contains `prefix`, or raise ValueError.
+
+    `iterations` takes the first checkpoint written at or past that many training steps;
+    the default takes the last one logged."""
     output_dir = Path(save_dir)
     api = wandb.Api()
     run = api.run(f'{entity}/{project}/{run_id}')
@@ -144,7 +171,10 @@ def download_model(run_id: str, save_dir: Path | str, model_name: str,
     (output_dir / model_name).mkdir(parents=True, exist_ok=True)
     save_config(config, output_dir / model_name / 'config.yaml')
 
-    policy_artifact = get_latest_artifact(run, prefix)
+    policy_artifact = (
+        get_latest_artifact(run, prefix) if iterations is None
+        else get_earliest_artifact(run, prefix, iterations)
+    )
     artifact_dir = policy_artifact.download(
         root=str(output_dir / model_name / str(policy_artifact.metadata['iteration']))
     )

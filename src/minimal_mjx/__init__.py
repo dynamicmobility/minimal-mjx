@@ -44,6 +44,7 @@ from .utils import (
     deepcopy_config,
     flatten_config,
     unflatten_config,
+    get_earliest_artifact,
     get_latest_artifact,
 )
 from .envs import SwappableBase
@@ -105,6 +106,7 @@ __all__ = [
     "read_yaml",
     "flatten_config",
     "unflatten_config",
+    "get_earliest_artifact",
     "get_latest_artifact",
     "run_setup",
     "save_config",

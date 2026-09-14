@@ -19,6 +19,7 @@ from .logging import (
     save_training_state,
     flatten_config,
     unflatten_config,
+    get_earliest_artifact,
     get_latest_artifact,
 )
 from .plotting import (
@@ -65,6 +66,7 @@ __all__ = [
     "deepcopy_config",
     "delete_failed_runs",
     "download_model",
+    "get_earliest_artifact",
     "get_latest_artifact",
     "initialize_wandb",
     "load_run_id",

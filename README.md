@@ -8,9 +8,9 @@ and evaluating policies simple:
 - **Swappable backend.** Write an environment once and run it on JAX/MJX (`jnp`)
   for fast parallel training, or on NumPy/C MuJoCo (`np`) for fast, debuggable rollouts.
 - **Base environment class** (`SwappableBase`) with common reward terms and helpers.
-- **YAML configs** that hold everything about a run: environment parameters, reward
-  weights, PPO and network settings. The config, with its git hash, is saved next
-  to every checkpoint.
+- **Config-agnostic library.** Library functions take plain arguments (`run_dir`,
+  `ppo_params`, `network_params`, ...). `mm.utils.Config` is the only code that
+  knows the YAML layout, so you can use your own layout by subclassing it or skip it.
 
 ## Install
 
@@ -24,10 +24,10 @@ pip install -e ".[dev]"            # from source, with pytest
 ```
 src/minimal_mjx/
   envs/generic/base.py    SwappableBase: backend switching, reward helpers, history buffers
-  learning/training.py    train(): builds the run dir, runs Brax PPO, saves checkpoints
-  learning/inference.py   load_policy(), get_last_model(), get_step_reset()
+  learning/training.py    train(): runs Brax PPO into a run dir, checkpoints, resumes
+  learning/inference.py   load_policy(run_dir), get_last_model(run_dir), get_step_reset()
   eval/rollout.py         rollout_policy(): roll out a policy, record data, render video
-  utils/config.py         read_config(), save_config(), Config (property access to a run config)
+  utils/config.py         Config (the only YAML-aware code), read_config(), save_config()
   utils/plotting.py       reward/data plotters, save_video(), save_metrics()
   utils/logging.py        Weights & Biases helpers (init, upload/download checkpoints)
   utils/state.py          EnvState, the NumPy-backend counterpart of mjx_env.State
@@ -80,17 +80,26 @@ the next.
 
 ```python
 import minimal_mjx as mm
-from minimal_mjx.utils.config import Config
 
-cfg = Config('example/cheetah.yaml')       # cfg.env_name, cfg.env_params, cfg.backend, cfg.run_dir, ...
+cfg = mm.utils.Config('example/cheetah.yaml')   # cfg.env_name, cfg.env_params, cfg.run_dir, ...
 env = Cheetah(env_params=cfg.env_params, backend=cfg.backend)
 
-policy = mm.learning.inference.load_policy(cfg.cfg)
-frames, traj, rewards, data, info = mm.eval.rollout_policy(policy, env, T=5.0)
+policy = mm.learning.inference.load_policy(cfg.run_dir)
+frames, traj, rewards, data, info = mm.eval.rollout_policy(policy, env, n_steps=500)
 mm.utils.plotting.save_video(frames, env.dt, 'videos/rollout.mp4')
 ```
 
-`Config` is meant to be subclassed by downstream projects (e.g. moplayground's `MOConfig`).
+Training follows the same pattern (see `example/train.py`):
+
+```python
+run_dir = mm.learning.create_training_directory(cfg.run_dir, overwrite=cfg.is_test)
+cfg.save(run_dir / 'config.yaml', make_dir=False)      # records the git hash
+mm.learning.train(env, env, run_dir, cfg.ppo_params, cfg.network_params,
+                  algorithm=cfg.algorithm, overwrite=cfg.is_test)
+```
+
+For a different YAML layout, subclass `Config` and override its properties (as
+moplayground's `MOConfig` does), or pass the arguments yourself.
 
 ## Tests
 

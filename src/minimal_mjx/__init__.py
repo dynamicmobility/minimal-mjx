@@ -4,6 +4,7 @@ from . import envs
 from . import eval
 from . import learning
 from .utils import (
+    Config,
     EnvState,
     FlowSeqDumper,
     InfoPlotter,
@@ -77,6 +78,7 @@ __all__ = [
     "eval",
     "learning",
     "utils",
+    "Config",
     "EnvState",
     "FlowSeqDumper",
     "InfoPlotter",

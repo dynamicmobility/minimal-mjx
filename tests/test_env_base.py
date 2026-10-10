@@ -17,9 +17,8 @@ def jitted(jnp_env):
 
 
 def test_invalid_backend_raises(cheetah_config):
-    from minimal_mjx.utils.config import create_config_dict
     with pytest.raises(ValueError, match='Unsupported backend'):
-        Cheetah(env_params=create_config_dict(cheetah_config.env_config), backend='torch')
+        Cheetah(env_params=cheetah_config.env_params, backend='torch')
 
 
 def test_backend_modules(np_env, jnp_env):

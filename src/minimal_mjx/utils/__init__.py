@@ -1,5 +1,6 @@
 from . import config, logging, plotting, setupGPU, state
 from .config import (
+    Config,
     FlowSeqDumper,
     create_config_dict,
     get_commit_hash,
@@ -56,6 +57,7 @@ __all__ = [
     "setupGPU",
     "state",
     "FlowSeqDumper",
+    "Config",
     "create_config_dict",
     "get_commit_hash",
     "read_config",

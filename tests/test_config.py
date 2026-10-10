@@ -255,3 +255,48 @@ def test_subclass_overrides_and_extends(tmp_path, cheetah_dict):
 
 def test_read_config_exported_from_utils():
     assert mm.utils.read_config is mmc.read_config
+
+
+# ---------------------------------------------------------------------------
+# Setters / defaults
+# ---------------------------------------------------------------------------
+
+def test_config_name_and_save_dir_setters(cheetah_yaml, tmp_path):
+    cfg = mmc.Config(cheetah_yaml)
+    cfg.name = 'renamed'
+    cfg.save_dir = tmp_path / 'elsewhere'
+    assert cfg.cfg.name == 'renamed'
+    assert cfg.cfg.save_dir == str(tmp_path / 'elsewhere')  # stays YAML-serializable
+    assert cfg.run_dir == tmp_path / 'elsewhere' / 'renamed'
+
+
+def test_config_is_test(cheetah_yaml):
+    cfg = mmc.Config(cheetah_yaml)
+    assert cfg.is_test
+    cfg.name = 'real'
+    assert not cfg.is_test
+
+
+def test_config_save_default_path(cheetah_yaml):
+    cfg = mmc.Config(cheetah_yaml)
+    cfg.save()
+    assert (cfg.run_dir / 'config.yaml').exists()
+
+
+def test_config_algorithm_defaults_to_ppo(tmp_path, cheetah_dict):
+    del cheetah_dict['algorithm']
+    path = tmp_path / 'noalgo.yaml'
+    mmc.save_config(cheetah_dict, path)
+    assert mmc.Config(path).algorithm == 'ppo'
+
+
+def test_deepcopy_config_is_independent():
+    cfg = config_dict.ConfigDict({'a': {'b': [1, 2]}})
+    copied = mmc.deepcopy_config(cfg)
+    copied.a.b.append(3)
+    assert cfg.a.b == [1, 2]
+
+
+def test_config_exported():
+    assert mm.Config is mmc.Config
+    assert mm.utils.Config is mmc.Config

@@ -26,17 +26,16 @@ def test_dummy_inference_unknown_mode(np_env):
         make_dummy_inference_fn(np_env, mode='bogus')
 
 
-def _rollout(env, inference_fn, T, **kwargs):
+def _rollout(env, inference_fn, n_steps, **kwargs):
     return mm.eval.rollout_policy(
-        inference_fn=inference_fn, env=env, T=T,
+        inference_fn=inference_fn, env=env, n_steps=n_steps,
         gen_vid=False, show_progress=False, **kwargs,
     )
 
 
 def test_rollout_policy_outputs(np_env):
-    T = 0.2
-    n_steps = int(T / np_env.dt)
-    out = _rollout(np_env, make_dummy_inference_fn(np_env, 'zero'), T)
+    n_steps = 20
+    out = _rollout(np_env, make_dummy_inference_fn(np_env, 'zero'), n_steps)
     assert len(out) == 5
     frames, traj, reward_plotter, data_plotter, info_plotter = out
 
@@ -56,7 +55,7 @@ def test_rollout_policy_outputs(np_env):
 
 def test_rollout_policy_info_hooks(np_env):
     out = _rollout(
-        np_env, make_dummy_inference_fn(np_env, 'zero'), 0.05,
+        np_env, make_dummy_inference_fn(np_env, 'zero'), 5,
         info_init_fn=lambda s: {'counter': np.array(0)},
         info_step_fn=lambda s: {'counter': s.info['counter'] + 1},
         info_plot_key=['counter'],
@@ -71,7 +70,7 @@ def test_rollout_policy_stops_on_done(np_env):
     def flip(state):
         state.data.qpos[2] = np.deg2rad(90)
         return state.info
-    out = _rollout(np_env, make_dummy_inference_fn(np_env, 'zero'), 1.0, info_init_fn=flip)
+    out = _rollout(np_env, make_dummy_inference_fn(np_env, 'zero'), 100, info_init_fn=flip)
     traj = out[1]
     assert len(traj) == 2
     assert traj[-1].done
@@ -80,8 +79,8 @@ def test_rollout_policy_stops_on_done(np_env):
 @pytest.mark.slow
 def test_rollout_policy_renders(np_env):
     frames, *_ = mm.eval.rollout_policy(
-        inference_fn=make_dummy_inference_fn(np_env, 'zero'), env=np_env, T=0.05,
+        inference_fn=make_dummy_inference_fn(np_env, 'zero'), env=np_env, n_steps=5,
         width=64, height=48, show_progress=False,
     )
-    assert len(frames) == int(0.05 / np_env.dt) + 1
+    assert len(frames) == 6
     assert frames[0].shape == (48, 64, 3)

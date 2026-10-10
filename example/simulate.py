@@ -9,10 +9,8 @@ from example.create_environment import create_environment
 import jax
 
 
-config = mm.utils.read_config(sys.argv[1])
-env, env_params = create_environment(
-    config,
-)
+cfg = mm.utils.Config(sys.argv[1])
+env, env_params = create_environment(cfg)
 inference_fn = mm.eval.rollout.make_dummy_inference_fn(env, mode='zero')
 inference_fn = jax.jit(inference_fn)
 
@@ -20,7 +18,7 @@ inference_fn = jax.jit(inference_fn)
 frames, _, reward_plotter, _, _ = mm.eval.rollout_policy(
     inference_fn    = inference_fn,
     env             = env,
-    T               = 10.0,
+    n_steps         = int(10.0 / env.dt),
     camera          = 'track',
     width           = 640,
     height          = 480
@@ -29,10 +27,10 @@ frames, _, reward_plotter, _, _ = mm.eval.rollout_policy(
 mm.utils.plotting.save_video(
     frames,
     env.dt,
-    Path(f'example/videos/{config['env']}-simulate.mp4')
+    Path(f'example/videos/{cfg.env_name}-simulate.mp4')
 )
 
 mm.utils.plotting.save_metrics(
     reward_plotter,
-    Path(f'example/plots/{config['env']}-simulate.pdf')
+    Path(f'example/plots/{cfg.env_name}-simulate.pdf')
 )

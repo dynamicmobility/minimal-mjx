@@ -1,6 +1,7 @@
 import yaml
 from ml_collections import config_dict
 from pathlib import Path
+import copy
 import os
 
 class FlowSeqDumper(yaml.Dumper):
@@ -62,9 +63,19 @@ def get_commit_hash(warn=True):
     except subprocess.CalledProcessError as e:
         print(f"Error getting commit hash: {e}")
         return None
-    
-    
+
+
+def deepcopy_config(config: config_dict.ConfigDict):
+    return copy.deepcopy(config)
+
+
 class Config:
+    """Reads a run's YAML config and hands its values to library functions.
+
+    This is the only place that knows the YAML layout. Library functions take plain
+    arguments (``run_dir``, ``ppo_params``, ...), so a different config layout only
+    needs a subclass that overrides these properties.
+    """
     
     def __init__(self, config: Path):
         self.cfg = read_config(config)
@@ -73,28 +84,34 @@ class Config:
         self.cfg = read_config(config)
         return self.cfg
     
-    def save(self, path: Path, make_dir=True, rewrite_test=True, warn_github_changes=True):
+    def save(self, path: Path = None, make_dir=True, rewrite_test=True, warn_github_changes=True):
+        """Write the config to ``path`` (default ``run_dir / 'config.yaml'``).
+
+        Runs not named ``test`` record the current git commit as ``git_hash``.
+        """
+        if path is None:
+            path = self.run_dir / 'config.yaml'
         if make_dir:
-            os.makedirs(self.run_dir, exist_ok=self.cfg.name == 'test')
+            os.makedirs(self.run_dir, exist_ok=self.is_test)
         
-        if self.cfg.name != 'test' and rewrite_test:
+        if not self.is_test and rewrite_test:
             self.cfg.git_hash = get_commit_hash(warn=warn_github_changes)
     
         save_config(self.cfg, path)
     
     @property
     def algorithm(self) -> str:
-        """Learning algorithm, like ``MORLAX``"""
-        return self.cfg.algorithm
+        """Learning algorithm, e.g. ``'ppo'`` (the default when unset)."""
+        return self.cfg.get('algorithm', 'ppo')
 
     @property
     def env_name(self) -> str:
-        """Environment class name, e.g. ``'MOCheetah'``."""
+        """Environment class name, e.g. ``'Cheetah'``."""
         return self.cfg.env
 
     @property
     def backend(self) -> str:
-        """``'jnp'`` when building an env for training, else the configured backend."""
+        """Backend for evaluation environments, ``'np'`` or ``'jnp'``."""
         return self.cfg.backend
 
     @property
@@ -104,7 +121,7 @@ class Config:
 
     @property
     def ppo_params(self) -> dict:
-        """PPO settings shared by both algorithms."""
+        """Brax PPO settings, passed to the trainer as keyword arguments."""
         return self.cfg.learning_params.ppo_params.to_dict()
 
     @property
@@ -122,10 +139,23 @@ class Config:
         """Run name."""
         return self.cfg.name
 
+    @name.setter
+    def name(self, value: str):
+        self.cfg.name = str(value)
+
+    @property
+    def is_test(self) -> bool:
+        """Runs named ``test`` may be overwritten and do not record a git hash."""
+        return self.name == 'test'
+
     @property
     def save_dir(self) -> Path:
         """Parent directory of all runs for this config."""
         return Path(self.cfg.save_dir)
+
+    @save_dir.setter
+    def save_dir(self, value):
+        self.cfg.save_dir = str(value)
 
     @property
     def run_dir(self) -> Path:

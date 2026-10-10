@@ -2,9 +2,8 @@ import wandb
 from brax.training import checkpoint
 from pathlib import Path
 from typing import Any
-from minimal_mjx.utils.config import create_config_dict, read_config, save_config
+from minimal_mjx.utils.config import save_config
 from brax.training.agents.ppo.checkpoint import _CONFIG_FNAME
-from ml_collections.config_dict import ConfigDict
 from orbax import checkpoint as ocp
 
 # Names, inside a run directory, of the state a continued run reads back.
@@ -147,35 +146,37 @@ def get_earliest_artifact(
     return min(past, key=lambda a: a.metadata['iteration'])
 
 
-def download_model(run_id: str, save_dir: Path | str, model_name: str,
+def download_model(run_id: str, run_dir: Path | str,
                    entity: str, project: str, prefix: str,
                    iterations: float | None = None) -> str:
-    """Download config and policy checkpoint artifacts for a W&B run.
-    Model name takes contains `prefix`, or raise ValueError.
+    """Download a W&B run's config and a policy checkpoint into ``run_dir``.
 
-    `iterations` takes the first checkpoint written at or past that many training steps;
-    the default takes the last one logged."""
-    output_dir = Path(save_dir)
+    The config is saved, unchanged, as ``run_dir / 'config.yaml'`` (rebuilt from the
+    run's logged config if it has no config artifact). Its paths still point at where
+    the run trained, so update them before reusing it, e.g. with
+    :class:`minimal_mjx.utils.config.Config`.
+
+    The checkpoint is the last artifact whose name contains ``prefix``, or, with
+    ``iterations``, the first one written at or past that many training steps.
+    Returns the checkpoint's directory.
+    """
+    run_dir = Path(run_dir)
     api = wandb.Api()
     run = api.run(f'{entity}/{project}/{run_id}')
 
+    run_dir.mkdir(parents=True, exist_ok=True)
     try:
         config_artifact = get_latest_artifact(run, 'config')
     except ValueError:
-        config: ConfigDict = create_config_dict(unflatten_config(run.config))
+        save_config(unflatten_config(run.config), run_dir / 'config.yaml')
     else:
-        artifact_dir = config_artifact.download(root=output_dir / model_name)
-        config: ConfigDict = read_config(Path(artifact_dir) / 'config.yaml')
-    config['save_dir'] = str(output_dir)
-    config['name'] = str(model_name)
-    (output_dir / model_name).mkdir(parents=True, exist_ok=True)
-    save_config(config, output_dir / model_name / 'config.yaml')
+        config_artifact.download(root=run_dir)
 
     policy_artifact = (
         get_latest_artifact(run, prefix) if iterations is None
         else get_earliest_artifact(run, prefix, iterations)
     )
     artifact_dir = policy_artifact.download(
-        root=str(output_dir / model_name / str(policy_artifact.metadata['iteration']))
+        root=str(run_dir / str(policy_artifact.metadata['iteration']))
     )
     return artifact_dir

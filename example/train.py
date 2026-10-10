@@ -5,28 +5,36 @@ import minimal_mjx as mm
 from example.create_environment import create_environment
 
 # Read configuration file
-train_config = mm.utils.read_config(sys.argv[1])
+cfg = mm.utils.Config(sys.argv[1])
 
 # Create environment
-env, env_cfg = create_environment(train_config, for_training=True)
+env, env_params = create_environment(cfg, for_training=True)
+
+# Create the run directory and save the config next to the checkpoints
+# (runs named 'test' may be overwritten and skip recording the git hash)
+run_dir = mm.create_training_directory(cfg.run_dir, overwrite=cfg.is_test)
+cfg.save(run_dir / 'config.yaml', make_dir=False)
 
 # Initialize Weights and Biases Run object (if you want to use it)
 USE_WANDB = True
 if not USE_WANDB:
     run = None
 else:
-    name = train_config['save_dir'] + '/' + train_config['name']
     run = mm.utils.logging.initialize_wandb(
-        name    = name.replace('/', ''),
+        name    = str(run_dir).replace('/', ''),
         entity  = 'njanwani-gatech',
         project = 'my-awesome-project-2',
-        config  = train_config
+        config  = cfg.cfg.to_dict()
     )
 
-# Begin training (the run directory and config are created inside train)
+# Begin training
 mm.learning.train(
-    config=train_config,
-    env=env,
-    eval_env=env,
-    run=run
+    env            = env,
+    eval_env       = env,
+    run_dir        = run_dir,
+    ppo_params     = cfg.ppo_params,
+    network_params = cfg.network_params,
+    algorithm      = cfg.algorithm,
+    run            = run,
+    overwrite      = cfg.is_test,
 )

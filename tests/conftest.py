@@ -39,7 +39,7 @@ def cheetah_yaml(tmp_path, cheetah_dict):
 @pytest.fixture(scope='session')
 def cheetah_config():
     import minimal_mjx as mm
-    return mm.utils.read_config(CHEETAH_YAML)
+    return mm.utils.Config(CHEETAH_YAML)
 
 
 @pytest.fixture(scope='session')

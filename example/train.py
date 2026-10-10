@@ -1,10 +1,11 @@
 import matplotlib
 matplotlib.use('Agg')
+import sys
 import minimal_mjx as mm
 from example.create_environment import create_environment
 
 # Read configuration file
-train_config = mm.utils.read_config()
+train_config = mm.utils.read_config(sys.argv[1])
 
 # Create environment
 env, env_cfg = create_environment(train_config, for_training=True)

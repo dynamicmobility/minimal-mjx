@@ -2,13 +2,14 @@ import os
 os.environ["MUJOCO_GL"] = "egl"
 os.environ['JAX_PLATFORMS']='cpu'
 import numpy as np
+import sys
 import minimal_mjx as mm
 from pathlib import Path
 from example.create_environment import create_environment
 import jax
 
 
-config = mm.utils.read_config()
+config = mm.utils.read_config(sys.argv[1])
 env, env_params = create_environment(
     config,
 )
@@ -16,7 +17,7 @@ env, env_params = create_environment(
 inference_fn = mm.learning.inference.load_policy(config, deterministic=True)
 inference_fn = jax.jit(inference_fn)
 
-frames, reward_plotter, _, _ = mm.eval.rollout_policy(
+frames, _, reward_plotter, _, _ = mm.eval.rollout_policy(
     inference_fn    = inference_fn,
     env             = env,
     T               = 10.0,

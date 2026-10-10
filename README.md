@@ -1,85 +1,100 @@
-# MINIMAL-MJX
+# minimal_mjx
 
-This repository represents starter code for MJX-based RL from the Dynamic Mobility
-Lab. The code has been built of off MuJoCo Playground and tailored to make
-policy training, saving, and evaluation easy and implements some nice-to-haves.
-1. Swappable backend, allowing for fast evaluation using numpy/C++ MuJoCo and fast training using JaX/MJX
-2. Base environment class that contains generic reward functions and useful functions
-3. Configuration files that allow you to set parameters for your envs + for PPO
+Starter code for MJX-based reinforcement learning from the Dynamic Mobility Lab.
+It is built on [MuJoCo Playground](https://github.com/google-deepmind/mujoco_playground)
+and [Brax](https://github.com/google/brax) PPO, and keeps training, checkpointing,
+and evaluating policies simple:
 
-There exists a `requirements.txt` in the home directory which includes the packages
-needed to run this code.
+- **Swappable backend.** Write an environment once and run it on JAX/MJX (`jnp`)
+  for fast parallel training, or on NumPy/C MuJoCo (`np`) for fast, debuggable rollouts.
+- **Base environment class** (`SwappableBase`) with common reward terms and helpers.
+- **YAML configs** that hold everything about a run: environment parameters, reward
+  weights, PPO and network settings. The config, with its git hash, is saved next
+  to every checkpoint.
 
-# Steps to take to 'do RL'!
-We will work of off the Cheetah environment from Deepmind's "DM Control". This guide
-is not meant to be comprehensive, but is hopefully enough information to fill in 
-the gaps as you develop and look around the codebase.
+## Install
 
-0. **The setup basics**
+```bash
+pip install minimal_mjx            # from PyPI
+pip install -e ".[dev]"            # from source, with pytest
+```
 
-    Each environment has a `reset` and `step` function, which primarily operate
-    off of a Markov Decision Process (MDP) state. In our case, this is represented
-    as a class that looks like this
-    ```python
-        @dataclass
-        class MujocoState:
-            data: mujoco.MjData
-            obs: np.ndarray
-            reward: float
-            done: bool
-            metrics: dict
-            info: dict
-    ```
-    Note that you should treat info as a 'carry' variable between consecutive 
-    `step` functions. Store things here you need to use in future timesteps that
-    are not ordinarily stored in `data` (i.e. store a history of system states `x`).
+## Repository layout
 
-1. **Simulate your environment to make sure things look good**
-    
-    Environments should be simulated and inspected before training. Once you 
-    are done developing your env, make a configuration file to specify 
-    variables specific to training runs, like PPO or reward weight parameters. 
-    
-    For the Cheetah, one is already created. To simulate the environment, run
-    ```bash
-    python3 -m envs.simulate envs/dmcontrol/config/cheetah.yaml
-    ```
+```
+src/minimal_mjx/
+  envs/generic/base.py    SwappableBase: backend switching, reward helpers, history buffers
+  learning/training.py    train(): builds the run dir, runs Brax PPO, saves checkpoints
+  learning/inference.py   load_policy(), get_last_model(), get_step_reset()
+  eval/rollout.py         rollout_policy(): roll out a policy, record data, render video
+  utils/config.py         read_config(), save_config(), Config (property access to a run config)
+  utils/plotting.py       reward/data plotters, save_video(), save_metrics()
+  utils/logging.py        Weights & Biases helpers (init, upload/download checkpoints)
+  utils/state.py          EnvState, the NumPy-backend counterpart of mjx_env.State
+example/                  a complete Cheetah task (see below)
+tests/                    pytest suite
+```
 
-    Under `visualization`, you should see a metrics plot as well as a video of 
-    your environment. Note that the policy here is simulated to output all zeros
-    (see `envs/simulate.py`). Inspect these files to make sure things look good.
+## Example: Cheetah
 
-    For extra good measure, change the `backend` parameter in your config file 
-    to `jnp` to make sure your environment is JaX compatible.
+`example/` shows the full workflow on DeepMind Control's Cheetah:
 
-2. **Train a policy**
+| File | Purpose |
+| --- | --- |
+| `cheetah.xml` | MuJoCo model |
+| `cheetah.py` | `Cheetah(SwappableBase)`: `reset`, `step`, observations, rewards, termination |
+| `cheetah.yaml` | Run config: name, save dir, backend, `env_config`, `learning_params` |
+| `create_environment.py` | Maps the config's `env` name to an environment class |
+| `simulate.py` | Rolls out a zero-action policy to check the environment |
+| `train.py` | Trains with PPO (logs to W&B; set `USE_WANDB = False` to turn this off) |
+| `rollout.py` | Loads the latest checkpoint and renders a rollout |
+| `cheetah_model_input.py` | Lean Cheetah that takes the `mjx.Model` as an argument, so many model variants can be vmapped (used by `scripts/rollout_cheetah_models.py`) |
 
-    Once your environment is ready and JaX compatible, you can train by running
-    ```bash
-    python3 -m learning.training.begin_run envs/dmcontrol/config/cheetah.yaml
-    ```
+Run each script from the repository root and pass the config as its argument:
 
-    Note that this will train directly in your terminal session. A bash script
-    has been provided at `learning/training/train.sh` that opens a `tmux` terminal
-    for this (useful if you want to train for long periods of time). *Make sure to
-    change your conda environment name in this script.*
+```bash
+python -m example.simulate example/cheetah.yaml   # video + reward plot in example/videos, example/plots
+python -m example.train    example/cheetah.yaml   # checkpoints in <save_dir>/<name>/
+python -m example.rollout  example/cheetah.yaml   # roll out the latest checkpoint
+```
 
-    Within your save directory mentioned in your config file, a new directory will
-    be created in which intermediate and final training results will be saved.
+Use `backend: np` for simulation and rollouts. Training always builds the `jnp`
+version. Before training, simulate once with `backend: jnp` to check that your
+environment is JAX-compatible.
 
-3. **Rollout your trained policy**
+To roll out an older policy, pass the `config.yaml` saved in that run's directory.
+Its `git_hash` records the commit the run was trained at. Runs named `test` can be
+overwritten and skip the git hash; any other name refuses to overwrite an existing run.
 
-    Once your policy is finished training, simply run
-    ```bash
-    python3 -m eval.rollout_policy envs/dmcontrol/config/cheetah.yaml
-    ```
-    
-    This will rollout your policy, plot metrics of your reward function, and
-    save a video of your result. Make sure to use an `np` backend for quick
-    evaluation!
+## Writing your own environment
 
-    If you would like to rollout older policies, check the directory of your past
-    training runs. There should be a config there, and you can simply replace 
-    the config above with that one (running that *specific* older policy). Note 
-    that your code might have changed, so this config holds a git commit that 
-    references when the training was run.
+Subclass `mm.envs.SwappableBase` and implement `reset`, `step`, `reward_function`,
+`_get_obs`, and `action_size`. To stay backend-agnostic, use the backend handles
+instead of `np`/`jnp` directly: `self._np`, `self._step_fn`, `self._data_init_fn`,
+`self._set_val_fn`, `self._uniform`, and so on. Rewards come back as a dict
+`{name: value}`, and `get_reward_and_metrics` weights them by
+`env_config.reward.weights`. Use `state.info` to carry values from one `step` to
+the next.
+
+## Using the API directly
+
+```python
+import minimal_mjx as mm
+from minimal_mjx.utils.config import Config
+
+cfg = Config('example/cheetah.yaml')       # cfg.env_name, cfg.env_params, cfg.backend, cfg.run_dir, ...
+env = Cheetah(env_params=cfg.env_params, backend=cfg.backend)
+
+policy = mm.learning.inference.load_policy(cfg.cfg)
+frames, traj, rewards, data, info = mm.eval.rollout_policy(policy, env, T=5.0)
+mm.utils.plotting.save_video(frames, env.dt, 'videos/rollout.mp4')
+```
+
+`Config` is meant to be subclassed by downstream projects (e.g. moplayground's `MOConfig`).
+
+## Tests
+
+```bash
+pytest            # fast suite (~15 s, CPU)
+pytest -m slow    # rendering, video, and a tiny end-to-end PPO run
+```

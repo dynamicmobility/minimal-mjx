@@ -32,7 +32,7 @@ def rollout_policy(
     gen_vid       = True,
     show_progress = True,
     camera        = None,
-) -> tuple[list, plotting.RewardPlotter, plotting.MujocoPlotter, plotting.InfoPlotter]:
+) -> tuple[list, list, plotting.RewardPlotter, plotting.MujocoPlotter, plotting.InfoPlotter]:
     width, height = plotting.infer_frame_dim(env.mj_model, width, height)
     step, reset = mm.learning.inference.get_step_reset(env)
 
@@ -78,4 +78,4 @@ def rollout_policy(
         )
     else:
         frames = None
-    return frames, reward_plotter, data_plotter, info_plotter
+    return frames, traj, reward_plotter, data_plotter, info_plotter

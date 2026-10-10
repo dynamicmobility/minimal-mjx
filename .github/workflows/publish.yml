@@ -6,7 +6,30 @@ on:
       - "v*"          # fires when you push a tag like v0.1.7
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system libraries (OpenCV / MuJoCo)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgl1 libegl1
+
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Run tests
+        run: python -m pytest
+
   build-and-publish:
+    needs: test                # only publish if the tests pass
     runs-on: ubuntu-latest
     environment: pypi          # optional: lets you add approval gates in repo settings
     permissions:

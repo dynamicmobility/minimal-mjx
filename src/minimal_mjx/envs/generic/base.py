@@ -77,9 +77,9 @@ class SwappableBase(mjx_env.MjxEnv):
             )
 
             def mjx_data_init_fn(qpos, qvel, ctrl, time, xfrc_applied, model=self._mjx_model) -> mjx.Data:
-                data = mjx_env.init(
-                    model, qpos=qpos, qvel=qvel, ctrl=ctrl
-                ).replace(time=time, xfrc_applied=xfrc_applied)
+                data = mjx.make_data(model).replace(
+                    qpos=qpos, qvel=qvel, ctrl=ctrl, time=time, xfrc_applied=xfrc_applied
+                )
                 data = mjx.forward(model, data)
                 return data.replace(ctrl=ctrl)
 

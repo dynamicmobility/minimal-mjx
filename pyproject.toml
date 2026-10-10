@@ -14,7 +14,16 @@ authors = [
 dependencies = [
   "numpy",
   "jax",
-  "playground==0.0.5",
+  "mujoco",
+  "mujoco-mjx",
+  "playground",
+  "brax",
+  "ml_collections",
+  "pyyaml",
+  "etils",
+  "tqdm",
+  "matplotlib",
+  "mediapy",
   "pandas",
   "h5py",
   "wandb",
@@ -23,6 +32,13 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "black"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not slow'"
+markers = [
+  "slow: JIT-heavy, rendering, or training tests (run with `-m slow` or `-m ''`)",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

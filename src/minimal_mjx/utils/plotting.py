@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Sequence
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import cv2
 import h5py
@@ -59,9 +60,17 @@ def get_mj_scene_option(contacts: bool = False, perts: bool = False, com: bool =
 
 
 def add_text_to_frame(pixels: np.ndarray, text: str, org: tuple[int, int],
-                      size: int = 1, thickness: int = 2,
-                      color: tuple[int, int, int] = (255, 255, 255)) -> np.ndarray:
-    """Overlay white text on a frame (in-place) and return it."""
+                      size: float = 1, thickness: int = 2,
+                      color: tuple[int, int, int] = (255, 255, 255),
+                      outline_color: tuple[int, int, int] | None = (0, 0, 0),
+                      outline_thickness: int = 2) -> np.ndarray:
+    """Overlay text on a frame (in-place) and return it.
+    """
+    if outline_color is not None and outline_thickness > 0:
+        cv2.putText(
+            pixels, text, org, cv2.FONT_HERSHEY_SIMPLEX,
+            size, outline_color, thickness + 2 * outline_thickness, cv2.LINE_AA,
+        )
     cv2.putText(
         pixels, text, org, cv2.FONT_HERSHEY_SIMPLEX,
         size, color, thickness, cv2.LINE_AA,
@@ -186,6 +195,26 @@ class RewardPlotter:
         axs[len(self.axdata)].plot(self.rewards)
         return fig, axs
 
+def load_progress(save_dir, times, x_data, y_data, y_dataerr, before=None) -> None:
+    """Refill `plot_progress`'s curves from the `progress.csv` a previous job wrote.
+
+    The callback rewrites the file from these lists on every eval, so a continued run
+    that started them empty would drop the epochs it inherited. `before` is the step it
+    restarts from: rows at or past it are left out, the run evaluating that state again
+    as its own first row.
+    """
+    path = Path(save_dir) / 'progress.csv'
+    if not path.exists():
+        return
+    frame = pd.read_csv(path)
+    if before is not None:
+        frame = frame[frame['x'] < before]
+    times.extend(pd.to_datetime(frame['times']).tolist())
+    x_data.extend(frame['x'].tolist())
+    y_data.extend(frame['y'].tolist())
+    y_dataerr.extend(frame['yerr'].tolist())
+
+
 def plot_progress(
     num_steps,
     metrics,
@@ -203,7 +232,7 @@ def plot_progress(
     interactive W&B line chart, and writes the raw curve to ``progress.csv``.
     """
     print('=== TRAINING EPOCH ===')
-    print('time', time.time())
+    print('time',datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %H:%M:%S %Z") )
     print('num_steps', num_steps)
     print('total steps', ppo_params["num_timesteps"])
     times.append(datetime.now())
@@ -228,10 +257,12 @@ def plot_progress(
 
     if run:
         # Log every scalar brax metric so each gets a native line chart.
-        scalars = {
-            k: float(v) for k, v in metrics.items()
-            if np.ndim(v) == 0 and not isinstance(v, str)
-        }
+        scalars = {}
+        for k, v in metrics.items():
+            try:
+                scalars[k] = float(v)
+            except (TypeError, ValueError):
+                continue
         run.log(scalars, step=num_steps)
 
 # ---------------------------------------------------------------------------

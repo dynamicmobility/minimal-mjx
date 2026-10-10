@@ -18,12 +18,16 @@ def get_step_reset(env: Any) -> tuple[Callable, Callable]:
     return step, reset
 
 def get_all_models(config: Dict[str, Any], sort: bool = True) -> List[Path]:
-    """Return all model directories as Path objects, sorted by integer name if requested."""
+    """Return all checkpoint directories as Path objects, sorted by step if requested.
+    """
     model_dir = Path(config['save_dir']) / config['name']
     if not model_dir.exists():
         raise FileNotFoundError(f"Model directory does not exist: {model_dir}")
     dir_files = glob(str(model_dir / '*'))
-    model_files = [Path(f) for f in dir_files if '.' not in f]
+    model_files = [
+        path for path in map(Path, dir_files)
+        if path.is_dir() and path.name.isdigit()
+    ]
     if sort:
         model_files.sort(key=lambda x: int(x.name))
     return model_files
@@ -31,11 +35,18 @@ def get_all_models(config: Dict[str, Any], sort: bool = True) -> List[Path]:
 def get_last_model(config: Dict[str, Any]) -> Path:
     """Return the most recent model directory as a Path object."""
     model_files = get_all_models(config, sort=True)
+    if not model_files:
+        raise FileNotFoundError(
+            f"No checkpoints in {Path(config['save_dir']) / config['name']}"
+        )
     return model_files[-1]
 
-def load_policy(config: Dict[str, Any], deterministic: bool = True) -> Callable:
+def load_policy(config: Dict[str, Any], deterministic: bool = True, checkpoint_path = None) -> Callable:
     """Load and return a policy from the last model checkpoint."""
-    path = get_last_model(config)
+    if checkpoint_path is None:
+        path = get_last_model(config)
+    else:
+        path = Path(checkpoint_path)
     print(f'Loading model at {path.as_posix()}')
     policy = checkpoint.load_policy(
         path.resolve(),

@@ -32,6 +32,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "black"]
+docs = ["mkdocs-material", "mkdocstrings[python]", "ruff"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

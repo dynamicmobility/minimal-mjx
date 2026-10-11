@@ -140,10 +140,8 @@ def train(
         ppo_params: Brax PPO keyword arguments. ``num_timesteps`` and
             ``normalize_observations`` are also read here.
         network_params: Keyword arguments for the network factory.
-        algorithm: (optional) Name of a handler in ``_ALGO_HANDLERS``. Ignored when
-            ``handle_params`` is given. Defaults to ``'ppo'``.
         run: (optional) Experiment-tracking handle (e.g. a wandb run).
-        handle_params: (optional) Callable
+        handle_params: Callable
             ``(ppo_params, network_params, resumed) -> (train_fn, network_factory)``,
             where ``resumed`` is a :class:`Resume` or None.
         progress_fn: (optional) Progress callback. Defaults to

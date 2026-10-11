@@ -1,0 +1,93 @@
+site_name: minimal_mjx
+site_description: Starter code for MJX-based reinforcement learning from the Dynamic Mobility Lab.
+repo_url: https://github.com/dynamicmobility/minimal-mjx
+repo_name: dynamicmobility/minimal-mjx
+edit_uri: edit/main/docs/
+
+nav:
+  - Home: index.md
+  - Examples:
+      - examples/index.md
+      - Training a policy: examples/training.md
+      - Rolling out a policy: examples/rollout.md
+  - Guides:
+      - The config file: guides/configuration.md
+      - Writing an environment: guides/environment.md
+  - API reference:
+      - api/index.md
+      - minimal_mjx.envs: api/envs.md
+      - minimal_mjx.learning: api/learning.md
+      - minimal_mjx.eval: api/eval.md
+      - minimal_mjx.utils: api/utils.md
+  - Developer guide: developer.md
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            docstring_options:
+              warn_missing_types: false
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: true
+            show_if_no_docstring: true
+            show_signature_annotations: true
+            separate_signature: true
+            signature_crossrefs: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
+            filters: ["!^_"]
+            heading_level: 2
+            summary: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true

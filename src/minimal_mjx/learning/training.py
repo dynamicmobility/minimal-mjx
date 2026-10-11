@@ -45,9 +45,6 @@ def setup_ppo(ppo_params: dict, network_params: dict, resumed: Resume | None = N
     )
     return train_fn, network_factory
 
-
-# Registry mapping an algorithm name -> parameter handler. Add new training
-# algorithms here. ``handle_params`` defaults to the registered handler.
 _ALGO_HANDLERS = {
     'ppo': setup_ppo,
 }
@@ -123,9 +120,8 @@ def train(
     run_dir,
     ppo_params,
     network_params,
-    algorithm='ppo',
+    handle_params,
     run=None,
-    handle_params=None,
     progress_fn=None,
     resume=False,
     overwrite=False,
@@ -133,7 +129,6 @@ def train(
     """Train a policy on the given environment.
 
     Creates ``run_dir``, resolves the training algorithm via ``handle_params``
-    (defaulting to the handler registered for ``algorithm`` in ``_ALGO_HANDLERS``),
     then wraps the resulting ``train_fn`` with progress/checkpoint callbacks and runs
     it. Saving the run's config is up to the caller (see
     :meth:`minimal_mjx.utils.config.Config.save`).
@@ -181,13 +176,6 @@ def train(
     step_offset = 0 if resumed is None else resumed.step
 
     # Resolve the training algorithm.
-    if handle_params is None:
-        print('Using default parameter handler')
-        if algorithm not in _ALGO_HANDLERS:
-            raise ValueError(
-                f"Unknown algorithm '{algorithm}'. Expected one of {list(_ALGO_HANDLERS)}."
-            )
-        handle_params = _ALGO_HANDLERS[algorithm]
     train_fn, network_factory = handle_params(ppo_params, network_params, resumed)
 
     # PPO params are still read here for the network config and progress plot. The algo

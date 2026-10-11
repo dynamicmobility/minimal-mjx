@@ -54,8 +54,8 @@ Run each script from the repository root and pass the config as its argument:
 
 ```bash
 python -m example.simulate example/cheetah.yaml   # video + reward plot in example/videos, example/plots
-python -m example.train    example/cheetah.yaml   # checkpoints in <save_dir>/<name>/
-python -m example.rollout  example/cheetah.yaml   # roll out the latest checkpoint
+python -m example.train   --config example/cheetah.yaml   # checkpoints in <save_dir>/<name>/
+python -m example.rollout --config example/cheetah.yaml   # roll out the latest checkpoint
 ```
 
 Use `backend: np` for simulation and rollouts. Training always builds the `jnp`

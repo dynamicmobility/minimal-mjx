@@ -56,7 +56,7 @@ def initialize_wandb(entity='njanwani-gatech', project='prefMORL', name='test', 
         entity    = entity,
         project   = project,
         name      = name,
-        config    = flatten_config(config),
+        config    = config,
         **kwargs
     )
 

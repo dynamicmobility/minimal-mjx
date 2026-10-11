@@ -118,7 +118,7 @@ make_inference_fn, params, _ = mm.train(
 3. **Attaches two callbacks** that Brax calls after every evaluation (`num_evals` times
    over the run):
     - a **progress callback**, by default
-      [`plot_progress`][minimal_mjx.utils.plotting.plot_progress], which appends the
+      [`Progress`][minimal_mjx.utils.plotting.Progress], which appends the
       evaluation reward to `progress.csv`, logs every scalar metric to W&B, and stops
       training if the reward becomes NaN;
     - a **checkpoint callback**, which writes the policy parameters with

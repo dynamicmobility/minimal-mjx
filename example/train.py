@@ -47,6 +47,7 @@ def main(
         network_factory_params    = cfg.network_params,
         run                       = run,
         overwrite                 = cfg.is_test,
+        progress_cls              = mm.Progress
     )
 
     # Save a video of the trained policy

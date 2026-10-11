@@ -123,7 +123,7 @@ def train(
     network_factory_params,
     handle_params,
     run=None,
-    progress_fn=None,
+    progress_cls=None,
     resume=False,
     overwrite=False,
 ):
@@ -144,8 +144,10 @@ def train(
         handle_params: Callable
             ``(ppo_params, network_params, resumed) -> (train_fn, network_factory)``,
             where ``resumed`` is a :class:`Resume` or None.
-        progress_fn: (optional) Progress callback. Defaults to
-            ``mm.utils.plotting.plot_progress``.
+        progress_cls: (optional) Progress callback class, built as
+            ``progress_cls(save_dir, total_timesteps, run)`` and handed to the
+            algorithm through its ``plot_progress`` method. Defaults to
+            :class:`minimal_mjx.utils.plotting.Progress`.
         resume: (optional) If True, continue the checkpoints already in ``run_dir``
             instead of refusing to overwrite it. ``num_timesteps`` is then the run's
             total budget and the algorithm trains what is left of it, checkpointing
@@ -158,8 +160,8 @@ def train(
     Returns:
         Tuple ``(make_inference_fn, trained_params, metrics)``.
     """
-    if progress_fn is None:
-        progress_fn = mm.utils.plotting.plot_progress
+    if progress_cls is None:
+        progress_cls = mm.utils.plotting.Progress
     output_dir = create_training_directory(run_dir, overwrite=overwrite, resume=resume)
     mm.utils.logging.save_run_id(output_dir, run)
 
@@ -198,24 +200,15 @@ def train(
         if training_state is not None:
             mm.utils.logging.save_training_state(output_dir, step, training_state)
 
-    x_data, y_data, y_dataerr, times = [], [], [], []
+    progress = progress_cls(output_dir, total_timesteps, run)
     if resumed is not None:
-        mm.utils.plotting.load_progress(
-            output_dir, times, x_data, y_data, y_dataerr, before=resumed.step
-        )
+        progress.load(before=resumed.step)
+    times = progress.times
     first = len(times)  # this job's own rows, for the timings printed below
     train_fn = functools.partial(
         train_fn,
-        progress_fn=lambda num_steps, metrics: progress_fn(
-            num_steps  = step_offset + num_steps,
-            metrics    = metrics,
-            times      = times,
-            x_data     = x_data,
-            y_data     = y_data,
-            y_dataerr  = y_dataerr,
-            ppo_params = train_fn_params,
-            save_dir   = output_dir,
-            run        = run,
+        progress_fn=lambda num_steps, metrics: progress.plot_progress(
+            step_offset + num_steps, metrics
         ),
         policy_params_fn=save_model_fn,
     )

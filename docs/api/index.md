@@ -34,4 +34,4 @@ mm.learning.training.train
 | `mm.rollout_policy`, `mm.make_dummy_inference_fn` | [`eval.rollout`](eval.md#minimal_mjx.eval.rollout) |
 | `mm.make_zero_policy`, `mm.make_open_loop_policy`, ... | [`eval.policy`](eval.md#minimal_mjx.eval.policy) |
 | `mm.initialize_wandb`, `mm.save_model`, `mm.download_model`, ... | [`utils.logging`](utils.md#minimal_mjx.utils.logging) |
-| `mm.save_video`, `mm.save_metrics`, `mm.plot_progress`, ... | [`utils.plotting`](utils.md#minimal_mjx.utils.plotting) |
+| `mm.save_video`, `mm.save_metrics`, `mm.Progress`, ... | [`utils.plotting`](utils.md#minimal_mjx.utils.plotting) |

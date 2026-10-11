@@ -196,7 +196,7 @@ class RewardPlotter:
         return fig, axs
 
 def load_progress(save_dir, times, x_data, y_data, y_dataerr, before=None) -> None:
-    """Refill `plot_progress`'s curves from the `progress.csv` a previous job wrote.
+    """Refill a :class:`Progress`'s curves from the `progress.csv` a previous job wrote.
 
     The callback rewrites the file from these lists on every eval, so a continued run
     that started them empty would drop the epochs it inherited. `before` is the step it
@@ -215,55 +215,70 @@ def load_progress(save_dir, times, x_data, y_data, y_dataerr, before=None) -> No
     y_dataerr.extend(frame['yerr'].tolist())
 
 
-def plot_progress(
-    num_steps,
-    metrics,
-    times,
-    x_data,
-    y_data,
-    y_dataerr,
-    ppo_params,
-    save_dir,
-    run=None
-):
-    """Brax PPO progress callback: accumulate eval reward, log native W&B lines.
+class Progress:
+    """Brax PPO progress callback that accumulates the eval reward curve.
 
-    Logs every scalar brax metric via ``run.log`` so each renders as a native,
-    interactive W&B line chart, and writes the raw curve to ``progress.csv``.
+    Pass :meth:`plot_progress` as brax's ``progress_fn``. The curve is rewritten to
+    ``save_dir/progress.csv`` on every eval, and every scalar metric is logged to
+    ``run`` (e.g. a wandb run) when one is given.
     """
-    print('=== TRAINING EPOCH ===')
-    print('time',datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %H:%M:%S %Z") )
-    print('num_steps', num_steps)
-    print('total steps', ppo_params["num_timesteps"])
-    times.append(datetime.now())
-    x_data.append(num_steps)
-    y_data.append(metrics["eval/episode_reward"])
-    y_dataerr.append(metrics["eval/episode_reward_std"])
-    pd.DataFrame(
-        {
-            'times': times,
-            'x': x_data,
-            'y': y_data,
-            'yerr': y_dataerr
-        }
-    ).to_csv(
-        save_dir / 'progress.csv',
-        index=False
-    )
 
-    if np.isnan(np.asarray(y_data, dtype=float)).any() \
-            or np.isnan(np.asarray(y_dataerr, dtype=float)).any():
-        raise Exception(f'NaN found... \n\n{y_data}\n\n{y_dataerr}')
+    def __init__(self, save_dir, total_timesteps=None, run=None) -> None:
+        self.run                = run
+        self.times              = []
+        self.x_data             = []
+        self.y_data             = []
+        self.y_dataerr          = []
+        self.save_dir           = Path(save_dir)
+        self.total_timesteps    = total_timesteps
 
-    if run:
-        # Log every scalar brax metric so each gets a native line chart.
-        scalars = {}
-        for k, v in metrics.items():
-            try:
-                scalars[k] = float(v)
-            except (TypeError, ValueError):
-                continue
-        run.log(scalars, step=num_steps)
+    def load(self, before=None) -> None:
+        """Refill the curves from an earlier job's ``progress.csv`` (see :func:`load_progress`)."""
+        load_progress(
+            self.save_dir, self.times, self.x_data, self.y_data, self.y_dataerr,
+            before=before,
+        )
+
+    def plot_progress(self, num_steps, metrics) -> None:
+        """Brax PPO progress callback: accumulate eval reward, log native W&B lines.
+
+        Logs every scalar brax metric via ``run.log`` so each renders as a native,
+        interactive W&B line chart, and writes the raw curve to ``progress.csv``.
+        """
+        print('=== TRAINING EPOCH ===')
+        print('time', datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %H:%M:%S %Z"))
+        print('num_steps', num_steps)
+        if self.total_timesteps is not None:
+            print('total steps', self.total_timesteps)
+
+        self.times.append(datetime.now())
+        self.x_data.append(int(num_steps))
+        self.y_data.append(float(metrics["eval/episode_reward"]))
+        self.y_dataerr.append(float(metrics["eval/episode_reward_std"]))
+        pd.DataFrame(
+            {
+                'times': self.times,
+                'x': self.x_data,
+                'y': self.y_data,
+                'yerr': self.y_dataerr
+            }
+        ).to_csv(
+            self.save_dir / 'progress.csv',
+            index=False
+        )
+
+        if np.isnan(self.y_data[-1]) or np.isnan(self.y_dataerr[-1]):
+            raise Exception(f'NaN found... \n\n{self.y_data}\n\n{self.y_dataerr}')
+
+        if self.run:
+            # Log every scalar brax metric so each gets a native line chart.
+            scalars = {}
+            for k, v in metrics.items():
+                try:
+                    scalars[k] = float(v)
+                except (TypeError, ValueError):
+                    continue
+            self.run.log(scalars, step=num_steps)
 
 # ---------------------------------------------------------------------------
 # I/O helpers

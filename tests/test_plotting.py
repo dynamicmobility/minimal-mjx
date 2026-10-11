@@ -79,28 +79,30 @@ def test_save_video_writes_file(tmp_path):
     assert path.exists() and path.stat().st_size > 0
 
 
-def test_plot_progress_writes_csv_and_logs(tmp_path):
+def test_progress_writes_csv_and_logs(tmp_path):
     logged = []
 
     class Run:
         def log(self, data, step):
             logged.append((data, step))
 
-    lists = dict(times=[], x_data=[], y_data=[], y_dataerr=[])
     metrics = {'eval/episode_reward': 1.0, 'eval/episode_reward_std': 0.1, 'note': 'skip'}
-    plotting.plot_progress(
-        num_steps=10, metrics=metrics, ppo_params={'num_timesteps': 100},
-        save_dir=tmp_path, run=Run(), **lists,
-    )
+    progress = plotting.Progress(str(tmp_path), total_timesteps=100, run=Run())
+    progress.plot_progress(10, metrics)
     assert (tmp_path / 'progress.csv').exists()
     assert logged == [({'eval/episode_reward': 1.0, 'eval/episode_reward_std': 0.1}, 10)]
 
 
-def test_plot_progress_raises_on_nan(tmp_path):
-    lists = dict(times=[], x_data=[], y_data=[], y_dataerr=[])
+def test_progress_load_resumes_curve(tmp_path):
+    first = plotting.Progress(tmp_path)
+    for step in (0, 10, 20):
+        first.plot_progress(step, {'eval/episode_reward': step, 'eval/episode_reward_std': 0.0})
+    resumed = plotting.Progress(tmp_path)
+    resumed.load(before=20)
+    assert resumed.x_data == [0, 10]
+
+
+def test_progress_raises_on_nan(tmp_path):
     metrics = {'eval/episode_reward': float('nan'), 'eval/episode_reward_std': 0.0}
     with pytest.raises(Exception, match='NaN'):
-        plotting.plot_progress(
-            num_steps=0, metrics=metrics, ppo_params={'num_timesteps': 1},
-            save_dir=tmp_path, **lists,
-        )
+        plotting.Progress(tmp_path, total_timesteps=1).plot_progress(0, metrics)

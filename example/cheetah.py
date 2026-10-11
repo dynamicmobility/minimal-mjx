@@ -4,6 +4,7 @@ from typing import Any
 import minimal_mjx as mm
 
 import jax
+import numpy as np
 from ml_collections import config_dict
 from mujoco import mjx
 from mujoco_playground._src import mjx_env
@@ -13,8 +14,8 @@ from pathlib import Path
 INTERFACE_PATH = Path(__file__).resolve().parent
 class CheetahInterface:
     XML         = Path(INTERFACE_PATH / 'cheetah.xml')
-    DEFAULT_FF  = [0.0, 0.0, 0.0]
-    DEFAULT_JT  = [0.0] * 6
+    DEFAULT_FF  = np.zeros(3)
+    DEFAULT_JT  = np.zeros(6)
 
 class Cheetah(mm.envs.SwappableBase):
     """Hopper environment."""

@@ -38,3 +38,5 @@ wandb/
 src/minimal_mjx.egg-info
 example/results/*
 dist/*
+# Docs assets (videos/plots shown on the docs site)
+!docs/assets/*.mp4

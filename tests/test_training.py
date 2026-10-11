@@ -105,8 +105,8 @@ def _train(cfg, env, **kwargs):
     return training.train(
         env, env,
         run_dir=cfg.run_dir,
-        ppo_params=cfg.ppo_params,
-        network_params=cfg.network_params,
+        train_fn_params=cfg.ppo_params,
+        network_factory_params=cfg.network_params,
         **{'handle_params': training.setup_ppo, **kwargs},
     )
 
@@ -115,8 +115,8 @@ def test_train_passes_params_to_handle_params(cfg, np_env):
     class Called(Exception):
         pass
 
-    def handle_params(ppo_params, network_params, resumed):
-        raise Called(ppo_params, network_params, resumed)
+    def handle_params(train_fn_params, network_factory_params, resumed):
+        raise Called(train_fn_params, network_factory_params, resumed)
 
     with pytest.raises(Called) as exc_info:
         _train(cfg, np_env, handle_params=handle_params)

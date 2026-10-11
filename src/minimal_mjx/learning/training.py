@@ -42,6 +42,7 @@ def setup_ppo(ppo_params: dict, network_params: dict, resumed: Resume | None = N
         network_factory=network_factory,
         # brax restores the checkpointed params and normalizer, not its optimizer.
         restore_checkpoint_path=None if resumed is None else str(resumed.path),
+        wrap_env_fn=wrapper.wrap_for_brax_training,
     )
     return train_fn, network_factory
 
@@ -118,8 +119,8 @@ def train(
     env,
     eval_env,
     run_dir,
-    ppo_params,
-    network_params,
+    train_fn_params,
+    network_factory_params,
     handle_params,
     run=None,
     progress_fn=None,
@@ -137,9 +138,8 @@ def train(
         env: Training environment.
         eval_env: Evaluation environment used for periodic rollouts.
         run_dir: Directory for checkpoints and progress output.
-        ppo_params: Brax PPO keyword arguments. ``num_timesteps`` and
-            ``normalize_observations`` are also read here.
-        network_params: Keyword arguments for the network factory.
+        train_fn_params: Algorithmic parameters for your specific training algo.
+        network_factory_params: Keyword arguments for the network factory.
         run: (optional) Experiment-tracking handle (e.g. a wandb run).
         handle_params: Callable
             ``(ppo_params, network_params, resumed) -> (train_fn, network_factory)``,
@@ -163,26 +163,26 @@ def train(
     output_dir = create_training_directory(run_dir, overwrite=overwrite, resume=resume)
     mm.utils.logging.save_run_id(output_dir, run)
 
-    ppo_params = dict(ppo_params)
-    total_timesteps = ppo_params['num_timesteps']
+    train_fn_params = dict(train_fn_params)
+    total_timesteps = train_fn_params['num_timesteps']
     resumed = find_resume(output_dir) if resume else None
     if resume and resumed is None:
         print(f'Nothing to resume in {output_dir}; training from scratch.')
     if resumed is not None:
-        ppo_params = apply_resume(ppo_params, resumed)
+        train_fn_params = apply_resume(train_fn_params, resumed)
     # Steps the algorithm reports are its own; the run's axis carries on from here.
     step_offset = 0 if resumed is None else resumed.step
 
     # Resolve the training algorithm.
-    train_fn, network_factory = handle_params(ppo_params, network_params, resumed)
+    train_fn, network_factory = handle_params(train_fn_params, network_factory_params, resumed)
 
     # PPO params are still read here for the network config and progress plot. The algo
     # was handed the steps still owed, but the plot reports against the whole budget.
-    ppo_params = {**ppo_params, 'num_timesteps': total_timesteps}
+    train_fn_params = {**train_fn_params, 'num_timesteps': total_timesteps}
     network_config = checkpoint.network_config(
         observation_size=eval_env.observation_size,
         action_size=eval_env.action_size,
-        normalize_observations=ppo_params['normalize_observations'],
+        normalize_observations=train_fn_params['normalize_observations'],
         network_factory=network_factory,
     )
 
@@ -213,7 +213,7 @@ def train(
             x_data     = x_data,
             y_data     = y_data,
             y_dataerr  = y_dataerr,
-            ppo_params = ppo_params,
+            ppo_params = train_fn_params,
             save_dir   = output_dir,
             run        = run,
         ),
@@ -226,7 +226,6 @@ def train(
     )
     make_inference_fn, trained_params, metrics = train_fn(
         environment=env,
-        wrap_env_fn=wrapper.wrap_for_brax_training,
         eval_env=eval_env,
     )
     print(f"time to jit: {times[first + 1] - times[first]}")

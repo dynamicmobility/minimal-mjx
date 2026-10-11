@@ -39,14 +39,14 @@ def main(
 
     # Begin training
     make_inference_fn, params, _ = mm.train(
-        env            = env,
-        eval_env       = env,
-        run_dir        = run_dir,
-        handle_params  = mm.setup_ppo,
-        ppo_params     = cfg.ppo_params,
-        network_params = cfg.network_params,
-        run            = run,
-        overwrite      = cfg.is_test,
+        env                       = env,
+        eval_env                  = env,
+        run_dir                   = run_dir,
+        handle_params             = mm.setup_ppo,
+        train_fn_params           = cfg.ppo_params,
+        network_factory_params    = cfg.network_params,
+        run                       = run,
+        overwrite                 = cfg.is_test,
     )
 
     # Save a video of the trained policy

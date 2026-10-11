@@ -107,13 +107,8 @@ def _train(cfg, env, **kwargs):
         run_dir=cfg.run_dir,
         ppo_params=cfg.ppo_params,
         network_params=cfg.network_params,
-        **kwargs,
+        **{'handle_params': training.setup_ppo, **kwargs},
     )
-
-
-def test_train_unknown_algorithm(cfg, np_env):
-    with pytest.raises(ValueError, match="Unknown algorithm 'sac'"):
-        _train(cfg, np_env, algorithm='sac')
 
 
 def test_train_passes_params_to_handle_params(cfg, np_env):
@@ -157,7 +152,8 @@ def test_train_smoke_and_load_policy(cfg, jnp_env):
     }
     network_params = {'policy_hidden_layer_sizes': [8], 'value_hidden_layer_sizes': [8]}
     _, params, _ = training.train(
-        jnp_env, jnp_env, cfg.run_dir, ppo_params, network_params, overwrite=True,
+        jnp_env, jnp_env, cfg.run_dir, ppo_params, network_params,
+        handle_params=training.setup_ppo, overwrite=True,
     )
     assert params is not None
 

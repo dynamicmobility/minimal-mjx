@@ -139,6 +139,10 @@ class Config:
         """Run name."""
         return self.cfg.name
 
+    @property
+    def total_timesteps(self) -> str:
+        return self.cfg.learning_params.ppo_params.num_timesteps
+
     @name.setter
     def name(self, value: str):
         self.cfg.name = str(value)

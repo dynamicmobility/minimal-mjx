@@ -1,0 +1,2807 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Starter code for MJX-based reinforcement learning from the Dynamic Mobility Lab.">
+      
+      
+      
+      
+        <link rel="prev" href="../envs/">
+      
+      
+        <link rel="next" href="../eval/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>minimal_mjx.learning - minimal_mjx</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#minimal_mjxlearning" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="minimal_mjx" class="md-header__button md-logo" aria-label="minimal_mjx" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            minimal_mjx
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              minimal_mjx.learning
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/dynamicmobility/minimal-mjx" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    dynamicmobility/minimal-mjx
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="minimal_mjx" class="md-nav__button md-logo" aria-label="minimal_mjx" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    minimal_mjx
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/dynamicmobility/minimal-mjx" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    dynamicmobility/minimal-mjx
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../examples/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training a policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/rollout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rolling out a policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The config file
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Writing an environment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../envs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    minimal_mjx.envs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    minimal_mjx.learning
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    minimal_mjx.learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;training
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" training">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.Resume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Resume
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" Resume">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.Resume.path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.Resume.step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;step
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.Resume.epoch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;epoch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.setup_ppo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;setup_ppo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.find_checkpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;find_checkpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.find_resume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;find_resume
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.apply_resume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;apply_resume
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.create_training_directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;create_training_directory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.train" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;train
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;inference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" inference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference.get_step_reset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_step_reset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference.get_all_models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_all_models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference.get_last_model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_last_model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference.load_policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;load_policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference.get_params" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_params
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    minimal_mjx.eval
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    minimal_mjx.utils
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;training
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" training">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.Resume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Resume
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" Resume">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.Resume.path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.Resume.step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;step
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.Resume.epoch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;epoch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.setup_ppo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;setup_ppo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.find_checkpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;find_checkpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.find_resume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;find_resume
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.apply_resume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;apply_resume
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.create_training_directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;create_training_directory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.training.train" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;train
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;inference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" inference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference.get_step_reset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_step_reset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference.get_all_models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_all_models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference.get_last_model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_last_model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference.load_policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;load_policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimal_mjx.learning.inference.get_params" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_params
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/dynamicmobility/minimal-mjx/edit/main/docs/api/learning.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="minimal_mjxlearning">minimal_mjx.learning<a class="headerlink" href="#minimal_mjxlearning" title="Permanent link">&para;</a></h1>
+<p>Training policies and loading them back. See <a href="../../examples/training/">Training a policy</a>
+for how these fit together.</p>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<h2 id="minimal_mjx.learning.training" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <span class="doc doc-object-name doc-module-name">minimal_mjx.learning.training</span>
+
+
+<a href="#minimal_mjx.learning.training" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+
+<p><span class="doc-section-title">Classes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" title="            Resume
+
+
+  
+      dataclass
+   (minimal_mjx.learning.training.Resume)" href="#minimal_mjx.learning.training.Resume">Resume</a></code></td>
+            <td>
+              <div class="doc-md-description">
+                <p>What a continued run inherits from the checkpoints already in its directory.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+<p><span class="doc-section-title">Functions:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            setup_ppo (minimal_mjx.learning.training.setup_ppo)" href="#minimal_mjx.learning.training.setup_ppo">setup_ppo</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Default handler: brax PPO. Returns <code>(train_fn, network_factory)</code>.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            find_checkpoints (minimal_mjx.learning.training.find_checkpoints)" href="#minimal_mjx.learning.training.find_checkpoints">find_checkpoints</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>The run's checkpoint directories, named by step and ordered by it.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            find_resume (minimal_mjx.learning.training.find_resume)" href="#minimal_mjx.learning.training.find_resume">find_resume</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Where training left off in <code>output_dir</code>, or None if it never checkpointed.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            apply_resume (minimal_mjx.learning.training.apply_resume)" href="#minimal_mjx.learning.training.apply_resume">apply_resume</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>A copy of <code>ppo_params</code> asking the algorithm for only the steps the run still owes.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            create_training_directory (minimal_mjx.learning.training.create_training_directory)" href="#minimal_mjx.learning.training.create_training_directory">create_training_directory</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Create the run output directory, refusing to clobber an earlier run.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            train (minimal_mjx.learning.training.train)" href="#minimal_mjx.learning.training.train">train</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Train a policy on the given environment.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="minimal_mjx.learning.training.Resume" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Resume</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#minimal_mjx.learning.training.Resume" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>What a continued run inherits from the checkpoints already in its directory.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" title="            path
+
+
+  
+      instance-attribute
+   (minimal_mjx.learning.training.Resume.path)" href="#minimal_mjx.learning.training.Resume.path">path</a></code></td>
+            <td>
+                  <code><span title="pathlib.Path">Path</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" title="            step
+
+
+  
+      instance-attribute
+   (minimal_mjx.learning.training.Resume.step)" href="#minimal_mjx.learning.training.Resume.step">step</a></code></td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" title="            epoch
+
+
+  
+      instance-attribute
+   (minimal_mjx.learning.training.Resume.epoch)" href="#minimal_mjx.learning.training.Resume.epoch">epoch</a></code></td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/minimal_mjx/learning/training.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.training.Resume--source--__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.Resume--source--__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.Resume--source--__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.Resume--source--__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.Resume--source--__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.Resume--source--__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.Resume--source--__codelineno-0-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.training.Resume--source--__codelineno-0-20" name="minimal_mjx.learning.training.Resume--source--__codelineno-0-20"></a><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+<a id="minimal_mjx.learning.training.Resume--source--__codelineno-0-21" name="minimal_mjx.learning.training.Resume--source--__codelineno-0-21"></a><span class="k">class</span><span class="w"> </span><span class="nc">Resume</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.Resume--source--__codelineno-0-22" name="minimal_mjx.learning.training.Resume--source--__codelineno-0-22"></a><span class="w">    </span><span class="sd">"""What a continued run inherits from the checkpoints already in its directory."""</span>
+<a id="minimal_mjx.learning.training.Resume--source--__codelineno-0-23" name="minimal_mjx.learning.training.Resume--source--__codelineno-0-23"></a>
+<a id="minimal_mjx.learning.training.Resume--source--__codelineno-0-24" name="minimal_mjx.learning.training.Resume--source--__codelineno-0-24"></a>    <span class="n">path</span>  <span class="p">:</span> <span class="n">Path</span>  <span class="c1"># newest checkpoint, i.e. the params to restart from</span>
+<a id="minimal_mjx.learning.training.Resume--source--__codelineno-0-25" name="minimal_mjx.learning.training.Resume--source--__codelineno-0-25"></a>    <span class="n">step</span>  <span class="p">:</span> <span class="nb">int</span>   <span class="c1"># env steps already trained</span>
+<a id="minimal_mjx.learning.training.Resume--source--__codelineno-0-26" name="minimal_mjx.learning.training.Resume--source--__codelineno-0-26"></a>    <span class="n">epoch</span> <span class="p">:</span> <span class="nb">int</span>   <span class="c1"># epochs already run, one checkpoint each after the one at step 0</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="minimal_mjx.learning.training.Resume.path" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">path</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#minimal_mjx.learning.training.Resume.path" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">path</span><span class="p">:</span> <span class="n"><span title="pathlib.Path">Path</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="minimal_mjx.learning.training.Resume.step" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">step</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#minimal_mjx.learning.training.Resume.step" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">step</span><span class="p">:</span> <span class="n"><span title="int">int</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="minimal_mjx.learning.training.Resume.epoch" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">epoch</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#minimal_mjx.learning.training.Resume.epoch" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">epoch</span><span class="p">:</span> <span class="n"><span title="int">int</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.training.setup_ppo" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">setup_ppo</span>
+
+
+<a href="#minimal_mjx.learning.training.setup_ppo" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">setup_ppo</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">ppo_params</span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">network_params</span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">resumed</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Resume
+
+
+  
+      dataclass
+   (minimal_mjx.learning.training.Resume)" href="#minimal_mjx.learning.training.Resume">Resume</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Default handler: brax PPO. Returns <code>(train_fn, network_factory)</code>.</p>
+<p><code>train_fn</code> is a :func:<code>functools.partial</code> of the brax PPO trainer with all
+algorithm params pre-bound; <code>network_factory</code> builds the PPO networks.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/training.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-47">47</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-29" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-29"></a><span class="k">def</span><span class="w"> </span><span class="nf">setup_ppo</span><span class="p">(</span><span class="n">ppo_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">network_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">resumed</span><span class="p">:</span> <span class="n">Resume</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-30" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-30"></a><span class="w">    </span><span class="sd">"""Default handler: brax PPO. Returns ``(train_fn, network_factory)``.</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-31" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-31"></a>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-32" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-32"></a><span class="sd">    ``train_fn`` is a :func:`functools.partial` of the brax PPO trainer with all</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-33" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-33"></a><span class="sd">    algorithm params pre-bound; ``network_factory`` builds the PPO networks.</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-34" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-34"></a><span class="sd">    """</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-35" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-35"></a>    <span class="n">network_factory</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-36" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-36"></a>        <span class="n">ppo_networks</span><span class="o">.</span><span class="n">make_ppo_networks</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-37" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-37"></a>        <span class="n">mean_kernel_init_fn</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">lecun_uniform</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-38" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-38"></a>        <span class="o">**</span><span class="n">network_params</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-39" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-39"></a>    <span class="p">)</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-40" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-40"></a>    <span class="n">train_fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-41" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-41"></a>        <span class="n">train_ppo</span><span class="p">,</span> <span class="o">**</span><span class="n">ppo_params</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-42" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-42"></a>        <span class="n">network_factory</span><span class="o">=</span><span class="n">network_factory</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-43" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-43"></a>        <span class="c1"># brax restores the checkpointed params and normalizer, not its optimizer.</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-44" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-44"></a>        <span class="n">restore_checkpoint_path</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">resumed</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">resumed</span><span class="o">.</span><span class="n">path</span><span class="p">),</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-45" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-45"></a>        <span class="n">wrap_env_fn</span><span class="o">=</span><span class="n">wrapper</span><span class="o">.</span><span class="n">wrap_for_brax_training</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-46" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-46"></a>    <span class="p">)</span>
+<a id="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-47" name="minimal_mjx.learning.training.setup_ppo--source--__codelineno-0-47"></a>    <span class="k">return</span> <span class="n">train_fn</span><span class="p">,</span> <span class="n">network_factory</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.training.find_checkpoints" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">find_checkpoints</span>
+
+
+<a href="#minimal_mjx.learning.training.find_checkpoints" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">find_checkpoints</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The run's checkpoint directories, named by step and ordered by it.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/training.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-56">56</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-62">62</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-54" name="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-54"></a><span class="k">def</span><span class="w"> </span><span class="nf">find_checkpoints</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<a id="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-55" name="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-55"></a><span class="w">    </span><span class="sd">"""The run's checkpoint directories, named by step and ordered by it."""</span>
+<a id="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-56" name="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-56"></a>    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-57" name="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-57"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">output_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<a id="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-58" name="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-58"></a>        <span class="k">return</span> <span class="p">[]</span>
+<a id="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-59" name="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-59"></a>    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-60" name="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-60"></a>        <span class="p">(</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">output_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()),</span>
+<a id="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-61" name="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-61"></a>        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+<a id="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-62" name="minimal_mjx.learning.training.find_checkpoints--source--__codelineno-0-62"></a>    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.training.find_resume" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">find_resume</span>
+
+
+<a href="#minimal_mjx.learning.training.find_resume" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">find_resume</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            Resume
+
+
+  
+      dataclass
+   (minimal_mjx.learning.training.Resume)" href="#minimal_mjx.learning.training.Resume">Resume</a></span> <span class="o">|</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Where training left off in <code>output_dir</code>, or None if it never checkpointed.</p>
+<p>The epoch count is the number of checkpoints past the one written at step 0, which is
+what a run writes per epoch; taking it from the directory keeps it right across
+several continuations, and across a schedule whose epochs changed size.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/training.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-66">66</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-67">67</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-68">68</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-69">69</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-70">70</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-71">71</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-72">72</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-73">73</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-74">74</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.find_resume--source--__codelineno-0-75">75</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-65" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-65"></a><span class="k">def</span><span class="w"> </span><span class="nf">find_resume</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Resume</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-66" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-66"></a><span class="w">    </span><span class="sd">"""Where training left off in ``output_dir``, or None if it never checkpointed.</span>
+<a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-67" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-67"></a>
+<a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-68" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-68"></a><span class="sd">    The epoch count is the number of checkpoints past the one written at step 0, which is</span>
+<a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-69" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-69"></a><span class="sd">    what a run writes per epoch; taking it from the directory keeps it right across</span>
+<a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-70" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-70"></a><span class="sd">    several continuations, and across a schedule whose epochs changed size.</span>
+<a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-71" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-71"></a><span class="sd">    """</span>
+<a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-72" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-72"></a>    <span class="n">checkpoints</span> <span class="o">=</span> <span class="n">find_checkpoints</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-73" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-73"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">checkpoints</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-74" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-74"></a>        <span class="k">return</span> <span class="kc">None</span>
+<a id="minimal_mjx.learning.training.find_resume--source--__codelineno-0-75" name="minimal_mjx.learning.training.find_resume--source--__codelineno-0-75"></a>    <span class="k">return</span> <span class="n">Resume</span><span class="p">(</span><span class="n">checkpoints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">checkpoints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">checkpoints</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.training.apply_resume" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">apply_resume</span>
+
+
+<a href="#minimal_mjx.learning.training.apply_resume" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">apply_resume</span><span class="p">(</span><span class="n">ppo_params</span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">,</span> <span class="n">resumed</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Resume
+
+
+  
+      dataclass
+   (minimal_mjx.learning.training.Resume)" href="#minimal_mjx.learning.training.Resume">Resume</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="dict">dict</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>A copy of <code>ppo_params</code> asking the algorithm for only the steps the run still owes.</p>
+<p><code>num_timesteps</code> is the run's whole budget, so continuing a run is a matter of
+raising it: the algorithm is handed the difference.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/training.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-78">78</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-79">79</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-80">80</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-81">81</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-82">82</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-83">83</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-84">84</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-85">85</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-86">86</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-87">87</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-88">88</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-89">89</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-90">90</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-91">91</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-92">92</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-93">93</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.apply_resume--source--__codelineno-0-94">94</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-78" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-78"></a><span class="k">def</span><span class="w"> </span><span class="nf">apply_resume</span><span class="p">(</span><span class="n">ppo_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">resumed</span><span class="p">:</span> <span class="n">Resume</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-79" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-79"></a><span class="w">    </span><span class="sd">"""A copy of ``ppo_params`` asking the algorithm for only the steps the run still owes.</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-80" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-80"></a>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-81" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-81"></a><span class="sd">    ``num_timesteps`` is the run's whole budget, so continuing a run is a matter of</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-82" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-82"></a><span class="sd">    raising it: the algorithm is handed the difference.</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-83" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-83"></a><span class="sd">    """</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-84" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-84"></a>    <span class="n">total</span> <span class="o">=</span> <span class="n">ppo_params</span><span class="p">[</span><span class="s1">'num_timesteps'</span><span class="p">]</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-85" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-85"></a>    <span class="k">if</span> <span class="n">resumed</span><span class="o">.</span><span class="n">step</span> <span class="o">&gt;=</span> <span class="n">total</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-86" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-86"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-87" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-87"></a>            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">resumed</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2"> has already trained </span><span class="si">{</span><span class="n">resumed</span><span class="o">.</span><span class="n">step</span><span class="si">}</span><span class="s2"> of the "</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-88" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-88"></a>            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> steps in num_timesteps; raise num_timesteps to continue it"</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-89" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-89"></a>        <span class="p">)</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-90" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-90"></a>    <span class="nb">print</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-91" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-91"></a>        <span class="sa">f</span><span class="s1">'Resuming </span><span class="si">{</span><span class="n">resumed</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s1"> from </span><span class="si">{</span><span class="n">resumed</span><span class="o">.</span><span class="n">step</span><span class="si">}</span><span class="s1"> steps (epoch '</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-92" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-92"></a>        <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">resumed</span><span class="o">.</span><span class="n">epoch</span><span class="si">}</span><span class="s1">); </span><span class="si">{</span><span class="n">total</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">resumed</span><span class="o">.</span><span class="n">step</span><span class="si">}</span><span class="s1"> steps left of </span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s1">'</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-93" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-93"></a>    <span class="p">)</span>
+<a id="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-94" name="minimal_mjx.learning.training.apply_resume--source--__codelineno-0-94"></a>    <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">ppo_params</span><span class="p">,</span> <span class="s1">'num_timesteps'</span><span class="p">:</span> <span class="n">total</span> <span class="o">-</span> <span class="n">resumed</span><span class="o">.</span><span class="n">step</span><span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.training.create_training_directory" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">create_training_directory</span>
+
+
+<a href="#minimal_mjx.learning.training.create_training_directory" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">create_training_directory</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">run_dir</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resume</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pathlib.Path">Path</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Create the run output directory, refusing to clobber an earlier run.</p>
+<p>If the directory already exists but holds nothing a run produced -- only a stale
+config, or the run id of a job that died before its first epoch -- it is reused.
+<code>overwrite</code> reuses it whatever it holds (e.g. for scratch runs), and so does
+<code>resume</code>, for a run that continues the checkpoints already there.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/training.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-97"> 97</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-98"> 98</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-99"> 99</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-100">100</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-101">101</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-102">102</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-103">103</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-104">104</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-105">105</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-106">106</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-107">107</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-108">108</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-110">110</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-113">113</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-114">114</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-115">115</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-97" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-97"></a><span class="k">def</span><span class="w"> </span><span class="nf">create_training_directory</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resume</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-98" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-98"></a><span class="w">    </span><span class="sd">"""Create the run output directory, refusing to clobber an earlier run.</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-99" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-99"></a>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-100" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-100"></a><span class="sd">    If the directory already exists but holds nothing a run produced -- only a stale</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-101" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-101"></a><span class="sd">    config, or the run id of a job that died before its first epoch -- it is reused.</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-102" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-102"></a><span class="sd">    ``overwrite`` reuses it whatever it holds (e.g. for scratch runs), and so does</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-103" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-103"></a><span class="sd">    ``resume``, for a run that continues the checkpoints already there.</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-104" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-104"></a><span class="sd">    """</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-105" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-105"></a>    <span class="c1"># Written before training starts, so their presence alone is not training output.</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-106" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-106"></a>    <span class="n">stale</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'config.yaml'</span><span class="p">,</span> <span class="n">mm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">RUN_ID_FNAME</span><span class="p">}</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-107" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-107"></a>    <span class="n">run_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-108" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-108"></a>    <span class="k">if</span> <span class="n">run_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-109" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-109"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">resume</span> <span class="ow">or</span> <span class="n">overwrite</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-110" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-110"></a>            <span class="n">path</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">stale</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">run_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-111" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-111"></a>        <span class="p">):</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-112" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-112"></a>            <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Training directory already exists: </span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-113" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-113"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-114" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-114"></a>        <span class="n">run_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-115" name="minimal_mjx.learning.training.create_training_directory--source--__codelineno-0-115"></a>    <span class="k">return</span> <span class="n">run_dir</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.training.train" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">train</span>
+
+
+<a href="#minimal_mjx.learning.training.train" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">train</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">env</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">eval_env</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">run_dir</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">train_fn_params</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">network_factory_params</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">handle_params</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">run</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">progress_cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">resume</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Train a policy on the given environment.</p>
+<p>Creates <code>run_dir</code>, resolves the training algorithm via <code>handle_params</code>
+then wraps the resulting <code>train_fn</code> with progress/checkpoint callbacks and runs
+it. Saving the run's config is up to the caller (see
+:meth:<code>minimal_mjx.utils.config.Config.save</code>).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>env</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Training environment.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>eval_env</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Evaluation environment used for periodic rollouts.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>run_dir</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Directory for checkpoints and progress output.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>train_fn_params</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Algorithmic parameters for your specific training algo.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>network_factory_params</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Keyword arguments for the network factory.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>run</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>(optional) Experiment-tracking handle (e.g. a wandb run).</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>handle_params</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Callable
+<code>(ppo_params, network_params, resumed) -&gt; (train_fn, network_factory)</code>,
+where <code>resumed</code> is a :class:<code>Resume</code> or None.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>progress_cls</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>(optional) Progress callback class, built as
+<code>progress_cls(save_dir, total_timesteps, run)</code> and handed to the
+algorithm through its <code>plot_progress</code> method. Defaults to
+:class:<code>minimal_mjx.utils.plotting.Progress</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>resume</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>(optional) If True, continue the checkpoints already in <code>run_dir</code>
+instead of refusing to overwrite it. <code>num_timesteps</code> is then the run's
+total budget and the algorithm trains what is left of it, checkpointing
+and plotting on the step axis the earlier job stopped on. An algorithm opts
+in by reading <code>resumed</code>; without that it retrains its whole share from
+scratch into the same directory.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>overwrite</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>(optional) If True, train into <code>run_dir</code> even if it holds an
+earlier run's output.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Tuple <code>(make_inference_fn, trained_params, metrics)</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/training.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-118">118</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-119">119</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-120">120</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-121">121</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-122">122</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-123">123</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-124">124</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-125">125</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-126">126</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-127">127</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-128">128</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-129">129</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-130">130</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-131">131</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-132">132</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-133">133</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-134">134</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-135">135</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-136">136</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-137">137</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-138">138</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-139">139</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-140">140</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-141">141</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-142">142</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-143">143</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-144">144</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-145">145</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-146">146</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-147">147</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-148">148</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-149">149</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-150">150</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-151">151</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-152">152</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-153">153</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-154">154</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-155">155</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-156">156</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-157">157</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-158">158</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-159">159</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-160">160</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-161">161</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-162">162</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-163">163</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-164">164</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-165">165</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-166">166</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-167">167</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-168">168</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-169">169</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-170">170</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-171">171</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-172">172</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-173">173</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-174">174</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-175">175</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-176">176</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-177">177</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-178">178</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-179">179</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-180">180</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-181">181</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-182">182</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-183">183</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-184">184</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-185">185</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-186">186</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-187">187</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-188">188</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-189">189</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-190">190</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-191">191</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-192">192</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-193">193</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-194">194</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-195">195</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-196">196</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-197">197</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-198">198</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-199">199</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-200">200</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-201">201</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-202">202</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-203">203</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-204">204</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-205">205</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-206">206</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-207">207</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-208">208</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-209">209</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-210">210</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-211">211</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-212">212</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-213">213</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-214">214</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-215">215</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-216">216</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-217">217</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-218">218</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-219">219</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-220">220</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-221">221</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-222">222</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-223">223</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-224">224</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-225">225</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-226">226</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.training.train--source--__codelineno-0-227">227</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.training.train--source--__codelineno-0-118" name="minimal_mjx.learning.training.train--source--__codelineno-0-118"></a><span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-119" name="minimal_mjx.learning.training.train--source--__codelineno-0-119"></a>    <span class="n">env</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-120" name="minimal_mjx.learning.training.train--source--__codelineno-0-120"></a>    <span class="n">eval_env</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-121" name="minimal_mjx.learning.training.train--source--__codelineno-0-121"></a>    <span class="n">run_dir</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-122" name="minimal_mjx.learning.training.train--source--__codelineno-0-122"></a>    <span class="n">train_fn_params</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-123" name="minimal_mjx.learning.training.train--source--__codelineno-0-123"></a>    <span class="n">network_factory_params</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-124" name="minimal_mjx.learning.training.train--source--__codelineno-0-124"></a>    <span class="n">handle_params</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-125" name="minimal_mjx.learning.training.train--source--__codelineno-0-125"></a>    <span class="n">run</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-126" name="minimal_mjx.learning.training.train--source--__codelineno-0-126"></a>    <span class="n">progress_cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-127" name="minimal_mjx.learning.training.train--source--__codelineno-0-127"></a>    <span class="n">resume</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-128" name="minimal_mjx.learning.training.train--source--__codelineno-0-128"></a>    <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-129" name="minimal_mjx.learning.training.train--source--__codelineno-0-129"></a><span class="p">):</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-130" name="minimal_mjx.learning.training.train--source--__codelineno-0-130"></a><span class="w">    </span><span class="sd">"""Train a policy on the given environment.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-131" name="minimal_mjx.learning.training.train--source--__codelineno-0-131"></a>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-132" name="minimal_mjx.learning.training.train--source--__codelineno-0-132"></a><span class="sd">    Creates ``run_dir``, resolves the training algorithm via ``handle_params``</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-133" name="minimal_mjx.learning.training.train--source--__codelineno-0-133"></a><span class="sd">    then wraps the resulting ``train_fn`` with progress/checkpoint callbacks and runs</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-134" name="minimal_mjx.learning.training.train--source--__codelineno-0-134"></a><span class="sd">    it. Saving the run's config is up to the caller (see</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-135" name="minimal_mjx.learning.training.train--source--__codelineno-0-135"></a><span class="sd">    :meth:`minimal_mjx.utils.config.Config.save`).</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-136" name="minimal_mjx.learning.training.train--source--__codelineno-0-136"></a>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-137" name="minimal_mjx.learning.training.train--source--__codelineno-0-137"></a><span class="sd">    Args:</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-138" name="minimal_mjx.learning.training.train--source--__codelineno-0-138"></a><span class="sd">        env: Training environment.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-139" name="minimal_mjx.learning.training.train--source--__codelineno-0-139"></a><span class="sd">        eval_env: Evaluation environment used for periodic rollouts.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-140" name="minimal_mjx.learning.training.train--source--__codelineno-0-140"></a><span class="sd">        run_dir: Directory for checkpoints and progress output.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-141" name="minimal_mjx.learning.training.train--source--__codelineno-0-141"></a><span class="sd">        train_fn_params: Algorithmic parameters for your specific training algo.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-142" name="minimal_mjx.learning.training.train--source--__codelineno-0-142"></a><span class="sd">        network_factory_params: Keyword arguments for the network factory.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-143" name="minimal_mjx.learning.training.train--source--__codelineno-0-143"></a><span class="sd">        run: (optional) Experiment-tracking handle (e.g. a wandb run).</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-144" name="minimal_mjx.learning.training.train--source--__codelineno-0-144"></a><span class="sd">        handle_params: Callable</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-145" name="minimal_mjx.learning.training.train--source--__codelineno-0-145"></a><span class="sd">            ``(ppo_params, network_params, resumed) -&gt; (train_fn, network_factory)``,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-146" name="minimal_mjx.learning.training.train--source--__codelineno-0-146"></a><span class="sd">            where ``resumed`` is a :class:`Resume` or None.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-147" name="minimal_mjx.learning.training.train--source--__codelineno-0-147"></a><span class="sd">        progress_cls: (optional) Progress callback class, built as</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-148" name="minimal_mjx.learning.training.train--source--__codelineno-0-148"></a><span class="sd">            ``progress_cls(save_dir, total_timesteps, run)`` and handed to the</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-149" name="minimal_mjx.learning.training.train--source--__codelineno-0-149"></a><span class="sd">            algorithm through its ``plot_progress`` method. Defaults to</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-150" name="minimal_mjx.learning.training.train--source--__codelineno-0-150"></a><span class="sd">            :class:`minimal_mjx.utils.plotting.Progress`.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-151" name="minimal_mjx.learning.training.train--source--__codelineno-0-151"></a><span class="sd">        resume: (optional) If True, continue the checkpoints already in ``run_dir``</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-152" name="minimal_mjx.learning.training.train--source--__codelineno-0-152"></a><span class="sd">            instead of refusing to overwrite it. ``num_timesteps`` is then the run's</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-153" name="minimal_mjx.learning.training.train--source--__codelineno-0-153"></a><span class="sd">            total budget and the algorithm trains what is left of it, checkpointing</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-154" name="minimal_mjx.learning.training.train--source--__codelineno-0-154"></a><span class="sd">            and plotting on the step axis the earlier job stopped on. An algorithm opts</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-155" name="minimal_mjx.learning.training.train--source--__codelineno-0-155"></a><span class="sd">            in by reading ``resumed``; without that it retrains its whole share from</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-156" name="minimal_mjx.learning.training.train--source--__codelineno-0-156"></a><span class="sd">            scratch into the same directory.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-157" name="minimal_mjx.learning.training.train--source--__codelineno-0-157"></a><span class="sd">        overwrite: (optional) If True, train into ``run_dir`` even if it holds an</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-158" name="minimal_mjx.learning.training.train--source--__codelineno-0-158"></a><span class="sd">            earlier run's output.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-159" name="minimal_mjx.learning.training.train--source--__codelineno-0-159"></a>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-160" name="minimal_mjx.learning.training.train--source--__codelineno-0-160"></a><span class="sd">    Returns:</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-161" name="minimal_mjx.learning.training.train--source--__codelineno-0-161"></a><span class="sd">        Tuple ``(make_inference_fn, trained_params, metrics)``.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-162" name="minimal_mjx.learning.training.train--source--__codelineno-0-162"></a><span class="sd">    """</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-163" name="minimal_mjx.learning.training.train--source--__codelineno-0-163"></a>    <span class="k">if</span> <span class="n">progress_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-164" name="minimal_mjx.learning.training.train--source--__codelineno-0-164"></a>        <span class="n">progress_cls</span> <span class="o">=</span> <span class="n">mm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">Progress</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-165" name="minimal_mjx.learning.training.train--source--__codelineno-0-165"></a>    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">create_training_directory</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">resume</span><span class="o">=</span><span class="n">resume</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-166" name="minimal_mjx.learning.training.train--source--__codelineno-0-166"></a>    <span class="n">mm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">save_run_id</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">run</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-167" name="minimal_mjx.learning.training.train--source--__codelineno-0-167"></a>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-168" name="minimal_mjx.learning.training.train--source--__codelineno-0-168"></a>    <span class="n">train_fn_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">train_fn_params</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-169" name="minimal_mjx.learning.training.train--source--__codelineno-0-169"></a>    <span class="n">total_timesteps</span> <span class="o">=</span> <span class="n">train_fn_params</span><span class="p">[</span><span class="s1">'num_timesteps'</span><span class="p">]</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-170" name="minimal_mjx.learning.training.train--source--__codelineno-0-170"></a>    <span class="n">resumed</span> <span class="o">=</span> <span class="n">find_resume</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="k">if</span> <span class="n">resume</span> <span class="k">else</span> <span class="kc">None</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-171" name="minimal_mjx.learning.training.train--source--__codelineno-0-171"></a>    <span class="k">if</span> <span class="n">resume</span> <span class="ow">and</span> <span class="n">resumed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-172" name="minimal_mjx.learning.training.train--source--__codelineno-0-172"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Nothing to resume in </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s1">; training from scratch.'</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-173" name="minimal_mjx.learning.training.train--source--__codelineno-0-173"></a>    <span class="k">if</span> <span class="n">resumed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-174" name="minimal_mjx.learning.training.train--source--__codelineno-0-174"></a>        <span class="n">train_fn_params</span> <span class="o">=</span> <span class="n">apply_resume</span><span class="p">(</span><span class="n">train_fn_params</span><span class="p">,</span> <span class="n">resumed</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-175" name="minimal_mjx.learning.training.train--source--__codelineno-0-175"></a>    <span class="c1"># Steps the algorithm reports are its own; the run's axis carries on from here.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-176" name="minimal_mjx.learning.training.train--source--__codelineno-0-176"></a>    <span class="n">step_offset</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">resumed</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">resumed</span><span class="o">.</span><span class="n">step</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-177" name="minimal_mjx.learning.training.train--source--__codelineno-0-177"></a>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-178" name="minimal_mjx.learning.training.train--source--__codelineno-0-178"></a>    <span class="c1"># Resolve the training algorithm.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-179" name="minimal_mjx.learning.training.train--source--__codelineno-0-179"></a>    <span class="n">train_fn</span><span class="p">,</span> <span class="n">network_factory</span> <span class="o">=</span> <span class="n">handle_params</span><span class="p">(</span><span class="n">train_fn_params</span><span class="p">,</span> <span class="n">network_factory_params</span><span class="p">,</span> <span class="n">resumed</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-180" name="minimal_mjx.learning.training.train--source--__codelineno-0-180"></a>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-181" name="minimal_mjx.learning.training.train--source--__codelineno-0-181"></a>    <span class="c1"># PPO params are still read here for the network config and progress plot. The algo</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-182" name="minimal_mjx.learning.training.train--source--__codelineno-0-182"></a>    <span class="c1"># was handed the steps still owed, but the plot reports against the whole budget.</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-183" name="minimal_mjx.learning.training.train--source--__codelineno-0-183"></a>    <span class="n">train_fn_params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">train_fn_params</span><span class="p">,</span> <span class="s1">'num_timesteps'</span><span class="p">:</span> <span class="n">total_timesteps</span><span class="p">}</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-184" name="minimal_mjx.learning.training.train--source--__codelineno-0-184"></a>    <span class="n">network_config</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">network_config</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-185" name="minimal_mjx.learning.training.train--source--__codelineno-0-185"></a>        <span class="n">observation_size</span><span class="o">=</span><span class="n">eval_env</span><span class="o">.</span><span class="n">observation_size</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-186" name="minimal_mjx.learning.training.train--source--__codelineno-0-186"></a>        <span class="n">action_size</span><span class="o">=</span><span class="n">eval_env</span><span class="o">.</span><span class="n">action_size</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-187" name="minimal_mjx.learning.training.train--source--__codelineno-0-187"></a>        <span class="n">normalize_observations</span><span class="o">=</span><span class="n">train_fn_params</span><span class="p">[</span><span class="s1">'normalize_observations'</span><span class="p">],</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-188" name="minimal_mjx.learning.training.train--source--__codelineno-0-188"></a>        <span class="n">network_factory</span><span class="o">=</span><span class="n">network_factory</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-189" name="minimal_mjx.learning.training.train--source--__codelineno-0-189"></a>    <span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-190" name="minimal_mjx.learning.training.train--source--__codelineno-0-190"></a>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-191" name="minimal_mjx.learning.training.train--source--__codelineno-0-191"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_model_fn</span><span class="p">(</span><span class="n">current_step</span><span class="p">,</span> <span class="n">make_policy</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">training_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-192" name="minimal_mjx.learning.training.train--source--__codelineno-0-192"></a><span class="w">        </span><span class="sd">"""Checkpoint the policy, and the learner state a continued run would need."""</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-193" name="minimal_mjx.learning.training.train--source--__codelineno-0-193"></a>        <span class="n">step</span> <span class="o">=</span> <span class="n">step_offset</span> <span class="o">+</span> <span class="n">current_step</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-194" name="minimal_mjx.learning.training.train--source--__codelineno-0-194"></a>        <span class="n">mm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-195" name="minimal_mjx.learning.training.train--source--__codelineno-0-195"></a>            <span class="n">step</span><span class="p">,</span> <span class="n">make_policy</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-196" name="minimal_mjx.learning.training.train--source--__codelineno-0-196"></a>            <span class="n">network_config</span> <span class="o">=</span> <span class="n">network_config</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-197" name="minimal_mjx.learning.training.train--source--__codelineno-0-197"></a>            <span class="n">output_dir</span>     <span class="o">=</span> <span class="n">output_dir</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-198" name="minimal_mjx.learning.training.train--source--__codelineno-0-198"></a>            <span class="n">run</span>            <span class="o">=</span> <span class="n">run</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-199" name="minimal_mjx.learning.training.train--source--__codelineno-0-199"></a>        <span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-200" name="minimal_mjx.learning.training.train--source--__codelineno-0-200"></a>        <span class="k">if</span> <span class="n">training_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-201" name="minimal_mjx.learning.training.train--source--__codelineno-0-201"></a>            <span class="n">mm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">save_training_state</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">training_state</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-202" name="minimal_mjx.learning.training.train--source--__codelineno-0-202"></a>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-203" name="minimal_mjx.learning.training.train--source--__codelineno-0-203"></a>    <span class="n">progress</span> <span class="o">=</span> <span class="n">progress_cls</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">total_timesteps</span><span class="p">,</span> <span class="n">run</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-204" name="minimal_mjx.learning.training.train--source--__codelineno-0-204"></a>    <span class="k">if</span> <span class="n">resumed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-205" name="minimal_mjx.learning.training.train--source--__codelineno-0-205"></a>        <span class="n">progress</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">before</span><span class="o">=</span><span class="n">resumed</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-206" name="minimal_mjx.learning.training.train--source--__codelineno-0-206"></a>    <span class="n">times</span> <span class="o">=</span> <span class="n">progress</span><span class="o">.</span><span class="n">times</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-207" name="minimal_mjx.learning.training.train--source--__codelineno-0-207"></a>    <span class="n">first</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span>  <span class="c1"># this job's own rows, for the timings printed below</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-208" name="minimal_mjx.learning.training.train--source--__codelineno-0-208"></a>    <span class="n">train_fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-209" name="minimal_mjx.learning.training.train--source--__codelineno-0-209"></a>        <span class="n">train_fn</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-210" name="minimal_mjx.learning.training.train--source--__codelineno-0-210"></a>        <span class="n">progress_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">progress</span><span class="o">.</span><span class="n">plot_progress</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-211" name="minimal_mjx.learning.training.train--source--__codelineno-0-211"></a>            <span class="n">step_offset</span> <span class="o">+</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">metrics</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-212" name="minimal_mjx.learning.training.train--source--__codelineno-0-212"></a>        <span class="p">),</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-213" name="minimal_mjx.learning.training.train--source--__codelineno-0-213"></a>        <span class="n">policy_params_fn</span><span class="o">=</span><span class="n">save_model_fn</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-214" name="minimal_mjx.learning.training.train--source--__codelineno-0-214"></a>    <span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-215" name="minimal_mjx.learning.training.train--source--__codelineno-0-215"></a>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-216" name="minimal_mjx.learning.training.train--source--__codelineno-0-216"></a>    <span class="nb">print</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-217" name="minimal_mjx.learning.training.train--source--__codelineno-0-217"></a>        <span class="s1">'Started training at'</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-218" name="minimal_mjx.learning.training.train--source--__codelineno-0-218"></a>        <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">ZoneInfo</span><span class="p">(</span><span class="s2">"America/New_York"</span><span class="p">))</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S %Z"</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-219" name="minimal_mjx.learning.training.train--source--__codelineno-0-219"></a>    <span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-220" name="minimal_mjx.learning.training.train--source--__codelineno-0-220"></a>    <span class="n">make_inference_fn</span><span class="p">,</span> <span class="n">trained_params</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">train_fn</span><span class="p">(</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-221" name="minimal_mjx.learning.training.train--source--__codelineno-0-221"></a>        <span class="n">environment</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-222" name="minimal_mjx.learning.training.train--source--__codelineno-0-222"></a>        <span class="n">eval_env</span><span class="o">=</span><span class="n">eval_env</span><span class="p">,</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-223" name="minimal_mjx.learning.training.train--source--__codelineno-0-223"></a>    <span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-224" name="minimal_mjx.learning.training.train--source--__codelineno-0-224"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"time to jit: </span><span class="si">{</span><span class="n">times</span><span class="p">[</span><span class="n">first</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">times</span><span class="p">[</span><span class="n">first</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-225" name="minimal_mjx.learning.training.train--source--__codelineno-0-225"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"time to train: </span><span class="si">{</span><span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">times</span><span class="p">[</span><span class="n">first</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-226" name="minimal_mjx.learning.training.train--source--__codelineno-0-226"></a>
+<a id="minimal_mjx.learning.training.train--source--__codelineno-0-227" name="minimal_mjx.learning.training.train--source--__codelineno-0-227"></a>    <span class="k">return</span> <span class="n">make_inference_fn</span><span class="p">,</span> <span class="n">trained_params</span><span class="p">,</span> <span class="n">metrics</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<h2 id="minimal_mjx.learning.inference" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <span class="doc doc-object-name doc-module-name">minimal_mjx.learning.inference</span>
+
+
+<a href="#minimal_mjx.learning.inference" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents first">
+
+        <p>Inference utilities for loading and interacting with trained RL models.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+<p><span class="doc-section-title">Functions:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            get_step_reset (minimal_mjx.learning.inference.get_step_reset)" href="#minimal_mjx.learning.inference.get_step_reset">get_step_reset</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Return (step, reset) functions, jitted if using JAX backend.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            get_all_models (minimal_mjx.learning.inference.get_all_models)" href="#minimal_mjx.learning.inference.get_all_models">get_all_models</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Return all checkpoint directories in <code>run_dir</code>, sorted by step if requested.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            get_last_model (minimal_mjx.learning.inference.get_last_model)" href="#minimal_mjx.learning.inference.get_last_model">get_last_model</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Return the most recent checkpoint directory in <code>run_dir</code>.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            load_policy (minimal_mjx.learning.inference.load_policy)" href="#minimal_mjx.learning.inference.load_policy">load_policy</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Load and return a policy from <code>checkpoint_path</code>, or the last checkpoint in</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="            get_params (minimal_mjx.learning.inference.get_params)" href="#minimal_mjx.learning.inference.get_params">get_params</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Load and return model parameters from <code>path</code>, or the last checkpoint in</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.inference.get_step_reset" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">get_step_reset</span>
+
+
+<a href="#minimal_mjx.learning.inference.get_step_reset" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_step_reset</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span><span class="n"><span title="typing.Callable">Callable</span></span><span class="p">,</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return (step, reset) functions, jitted if using JAX backend.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/inference.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-9" name="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_step_reset</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
+<a id="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-10" name="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-10"></a><span class="w">    </span><span class="sd">"""Return (step, reset) functions, jitted if using JAX backend."""</span>
+<a id="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-11" name="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-11"></a>    <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">_np</span> <span class="o">==</span> <span class="n">jax</span><span class="o">.</span><span class="n">numpy</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-12" name="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-12"></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">'jitting'</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-13" name="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-13"></a>        <span class="n">reset</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-14" name="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-14"></a>        <span class="n">step</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-15" name="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-15"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-16" name="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-16"></a>        <span class="n">reset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span>
+<a id="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-17" name="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-17"></a>        <span class="n">step</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span>
+<a id="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-18" name="minimal_mjx.learning.inference.get_step_reset--source--__codelineno-0-18"></a>    <span class="k">return</span> <span class="n">step</span><span class="p">,</span> <span class="n">reset</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.inference.get_all_models" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">get_all_models</span>
+
+
+<a href="#minimal_mjx.learning.inference.get_all_models" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_all_models</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">run_dir</span><span class="p">:</span> <span class="n"><span title="pathlib.Path">Path</span></span> <span class="o">|</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">sort</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return all checkpoint directories in <code>run_dir</code>, sorted by step if requested.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/inference.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-31">31</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-20" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-20"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_all_models</span><span class="p">(</span><span class="n">run_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-21" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-21"></a><span class="w">    </span><span class="sd">"""Return all checkpoint directories in ``run_dir``, sorted by step if requested."""</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-22" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-22"></a>    <span class="n">run_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-23" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-23"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">run_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-24" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-24"></a>        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model directory does not exist: </span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-25" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-25"></a>    <span class="n">model_files</span> <span class="o">=</span> <span class="p">[</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-26" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-26"></a>        <span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="n">glob</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">run_dir</span> <span class="o">/</span> <span class="s1">'*'</span><span class="p">)))</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-27" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-27"></a>        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-28" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-28"></a>    <span class="p">]</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-29" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-29"></a>    <span class="k">if</span> <span class="n">sort</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-30" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-30"></a>        <span class="n">model_files</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+<a id="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-31" name="minimal_mjx.learning.inference.get_all_models--source--__codelineno-0-31"></a>    <span class="k">return</span> <span class="n">model_files</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.inference.get_last_model" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">get_last_model</span>
+
+
+<a href="#minimal_mjx.learning.inference.get_last_model" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_last_model</span><span class="p">(</span><span class="n">run_dir</span><span class="p">:</span> <span class="n"><span title="pathlib.Path">Path</span></span> <span class="o">|</span> <span class="n"><span title="str">str</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pathlib.Path">Path</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return the most recent checkpoint directory in <code>run_dir</code>.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/inference.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-38">38</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-33" name="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-33"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_last_model</span><span class="p">(</span><span class="n">run_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-34" name="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-34"></a><span class="w">    </span><span class="sd">"""Return the most recent checkpoint directory in ``run_dir``."""</span>
+<a id="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-35" name="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-35"></a>    <span class="n">model_files</span> <span class="o">=</span> <span class="n">get_all_models</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-36" name="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-36"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">model_files</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-37" name="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-37"></a>        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No checkpoints in </span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-38" name="minimal_mjx.learning.inference.get_last_model--source--__codelineno-0-38"></a>    <span class="k">return</span> <span class="n">model_files</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.inference.load_policy" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">load_policy</span>
+
+
+<a href="#minimal_mjx.learning.inference.load_policy" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">load_policy</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">run_dir</span><span class="p">:</span> <span class="n"><span title="pathlib.Path">Path</span></span> <span class="o">|</span> <span class="n"><span title="str">str</span></span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">deterministic</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">checkpoint_path</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Callable">Callable</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Load and return a policy from <code>checkpoint_path</code>, or the last checkpoint in
+<code>run_dir</code>.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/inference.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-51">51</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.load_policy--source--__codelineno-0-56">56</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-40" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-40"></a><span class="k">def</span><span class="w"> </span><span class="nf">load_policy</span><span class="p">(</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-41" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-41"></a>    <span class="n">run_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-42" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-42"></a>    <span class="n">deterministic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-43" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-43"></a>    <span class="n">checkpoint_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-44" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-44"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-45" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-45"></a><span class="w">    </span><span class="sd">"""Load and return a policy from ``checkpoint_path``, or the last checkpoint in</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-46" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-46"></a><span class="sd">    ``run_dir``."""</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-47" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-47"></a>    <span class="k">if</span> <span class="n">checkpoint_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-48" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-48"></a>        <span class="n">path</span> <span class="o">=</span> <span class="n">get_last_model</span><span class="p">(</span><span class="n">run_dir</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-49" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-49"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-50" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-50"></a>        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-51" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-51"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Loading model at </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-52" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-52"></a>    <span class="n">policy</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">load_policy</span><span class="p">(</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-53" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-53"></a>        <span class="n">path</span><span class="o">.</span><span class="n">resolve</span><span class="p">(),</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-54" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-54"></a>        <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-55" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-55"></a>    <span class="p">)</span>
+<a id="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-56" name="minimal_mjx.learning.inference.load_policy--source--__codelineno-0-56"></a>    <span class="k">return</span> <span class="n">policy</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="minimal_mjx.learning.inference.get_params" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">get_params</span>
+
+
+<a href="#minimal_mjx.learning.inference.get_params" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_params</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">run_dir</span><span class="p">:</span> <span class="n"><span title="pathlib.Path">Path</span></span> <span class="o">|</span> <span class="n"><span title="str">str</span></span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">path</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">silent</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Any">Any</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Load and return model parameters from <code>path</code>, or the last checkpoint in
+<code>run_dir</code>.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/minimal_mjx/learning/inference.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-66">66</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-67">67</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-68">68</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-69">69</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-70">70</a></span>
+<span class="normal"><a href="#minimal_mjx.learning.inference.get_params--source--__codelineno-0-71">71</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-58" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-58"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_params</span><span class="p">(</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-59" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-59"></a>    <span class="n">run_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-60" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-60"></a>    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-61" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-61"></a>    <span class="n">silent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-62" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-62"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-63" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-63"></a><span class="w">    </span><span class="sd">"""Load and return model parameters from ``path``, or the last checkpoint in</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-64" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-64"></a><span class="sd">    ``run_dir``."""</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-65" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-65"></a>    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-66" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-66"></a>        <span class="n">path</span> <span class="o">=</span> <span class="n">get_last_model</span><span class="p">(</span><span class="n">run_dir</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-67" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-67"></a>    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-68" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-68"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-69" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-69"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Loading model at </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-70" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-70"></a>    <span class="n">params</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">epath</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()))</span>
+<a id="minimal_mjx.learning.inference.get_params--source--__codelineno-0-71" name="minimal_mjx.learning.inference.get_params--source--__codelineno-0-71"></a>    <span class="k">return</span> <span class="n">params</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../envs/" class="md-footer__link md-footer__link--prev" aria-label="Previous: minimal_mjx.envs">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                minimal_mjx.envs
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../eval/" class="md-footer__link md-footer__link--next" aria-label="Next: minimal_mjx.eval">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                minimal_mjx.eval
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -30,20 +30,24 @@ The trick that makes one class run on both backends: never call `np`, `jnp`, `mj
 
 ### `__init__`
 
-Pass the MuJoCo XML, the `env_params` from the config, and the backend:
+Pass the MuJoCo XML, the timesteps, the reward weights and the backend to
+`SwappableBase`. Take any settings of your own as ordinary arguments and store them:
 
 ```python
 class Cheetah(mm.envs.SwappableBase):
-    def __init__(self, env_params, backend):
+    def __init__(self, sim_dt, ctrl_dt, reward_weights, action_scale=1.0, backend='jnp'):
         super().__init__(
-            xml_path   = CheetahInterface.XML,
-            env_params = env_params,
-            backend    = backend,
+            xml_path       = CheetahInterface.XML,
+            sim_dt         = sim_dt,
+            ctrl_dt        = ctrl_dt,
+            reward_weights = reward_weights,
+            backend        = backend,
         )
+        self.action_scale = action_scale
 ```
 
-`SwappableBase` compiles the model, sets its timestep to `env_config.sim_dt`, and
-builds the backend handles. `num_free` (default 3) is the number of `qpos` entries
+`SwappableBase` compiles the model, sets its timestep to `sim_dt`, stores the weights
+as `self.reward_weights`, and builds the backend handles. `num_free` (default 3) is the number of `qpos` entries
 taken by the floating base; the Cheetah's are `rootx`, `rootz` and `rooty`.
 
 ### `reset(rng)`
@@ -75,7 +79,7 @@ Apply the action, advance the physics, and return the next state:
 ```python
 def step(self, state, action):
     state.info['xposbefore'] = state.data.qpos[0]
-    action = self._np.clip(self.params.action_scale * action, -1.0, 1.0)
+    action = self._np.clip(self.action_scale * action, -1.0, 1.0)
     data = self._step_fn(state.data, action)
     state.info['xposafter'] = data.qpos[0]
     state.info['ang']       = data.qpos[2]
@@ -106,10 +110,10 @@ def reward_function(self, data, action, info, done):
 ```
 
 [`get_reward_and_metrics`][minimal_mjx.envs.generic.base.SwappableBase.get_reward_and_metrics]
-multiplies each term by `env_config.reward.weights[name]` and sums them into the scalar
+multiplies each term by `self.reward_weights[name]` and sums them into the scalar
 reward. It also logs each weighted term as `reward/<name>` in `metrics`, which is what
 appears in W&B and in the rollout reward plot. Every name you return needs a weight in
-the config; set a weight to `0` to log a term without rewarding it.
+`reward_weights`; set a weight to `0` to log a term without rewarding it.
 
 `SwappableBase` provides some common terms:
 [`reward_alive`][minimal_mjx.envs.generic.base.SwappableBase.reward_alive],
@@ -142,13 +146,19 @@ For observations that need recent history, `SwappableBase` has
 ## Registering the environment
 
 The example scripts find environments by name through `example/create_environment.py`.
-Add a case for yours:
+It reads the arguments every environment needs from the config into `common_kwargs`
+(`backend`, `sim_dt`, `ctrl_dt` and `reward_weights`). Add a case for yours, passing
+any extra settings it takes from `env_params`:
 
 ```python
 match cfg.env_name:
     case 'Cheetah':
         from example.cheetah import Cheetah
-        env = Cheetah(**common_kwargs, **env_kwargs)
+        env = Cheetah(
+            **common_kwargs,
+            action_scale=env_params.action_scale,
+            **env_kwargs,
+        )
     case 'MyRobot':
         from example.my_robot import MyRobot
         env = MyRobot(**common_kwargs, **env_kwargs)

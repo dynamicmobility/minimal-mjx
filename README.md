@@ -82,7 +82,14 @@ the next.
 import minimal_mjx as mm
 
 cfg = mm.utils.Config('example/cheetah.yaml')   # cfg.env_name, cfg.env_params, cfg.run_dir, ...
-env = Cheetah(env_params=cfg.env_params, backend=cfg.backend)
+p = cfg.env_params
+env = Cheetah(
+    sim_dt=p.sim_dt,
+    ctrl_dt=p.ctrl_dt,
+    reward_weights=p.reward.weights.to_dict(),
+    action_scale=p.action_scale,
+    backend=cfg.backend,
+)
 
 policy = mm.learning.inference.load_policy(cfg.run_dir)
 frames, traj, rewards, data, info = mm.eval.rollout_policy(policy, env, n_steps=500)

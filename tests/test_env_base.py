@@ -17,8 +17,22 @@ def jitted(jnp_env):
 
 
 def test_invalid_backend_raises(cheetah_config):
+    p = cheetah_config.env_params
     with pytest.raises(ValueError, match='Unsupported backend'):
-        Cheetah(env_params=cheetah_config.env_params, backend='torch')
+        Cheetah(
+            sim_dt=p.sim_dt,
+            ctrl_dt=p.ctrl_dt,
+            reward_weights=p.reward.weights.to_dict(),
+            backend='torch',
+        )
+
+
+def test_constructor_args_stored(env, cheetah_config):
+    p = cheetah_config.env_params
+    assert env.sim_dt == p.sim_dt
+    assert env.dt == p.ctrl_dt
+    assert env.reward_weights == p.reward.weights.to_dict()
+    assert env.action_scale == p.action_scale
 
 
 def test_backend_modules(np_env, jnp_env):
@@ -37,7 +51,7 @@ def test_np_reset_step(np_env):
     t0 = state.data.time
     state = np_env.step(state, np.zeros(np_env.action_size))
     assert state.data.time == pytest.approx(t0 + np_env.dt)
-    assert set(state.metrics) == {f'reward/{k}' for k in np_env.params.reward.weights}
+    assert set(state.metrics) == {f'reward/{k}' for k in np_env.reward_weights}
 
 
 def test_jnp_reset_step(jnp_env, jitted):
@@ -102,7 +116,7 @@ def test_history(env):
 
 
 def test_get_reward_and_metrics(env):
-    weights = env.params.reward.weights
+    weights = env.reward_weights
     rewards = {k: float(i + 1) for i, k in enumerate(weights)}
     reward, metrics = env.get_reward_and_metrics(rewards, {})
     assert reward == pytest.approx(sum(weights[k] * v for k, v in rewards.items()))

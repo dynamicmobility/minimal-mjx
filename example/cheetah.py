@@ -22,14 +22,20 @@ class Cheetah(mm.envs.SwappableBase):
 
     def __init__(
         self,
-        env_params        : config_dict.ConfigDict,
-        backend           : str,
+        sim_dt            : float,
+        ctrl_dt           : float,
+        reward_weights    : dict,
+        action_scale      : float = 1.0,
+        backend           : str = 'jnp',
     ):
         super().__init__(
             xml_path          = CheetahInterface.XML,
-            env_params        = env_params,
+            sim_dt            = sim_dt,
+            ctrl_dt           = ctrl_dt,
+            reward_weights    = reward_weights,
             backend           = backend,
         )
+        self.action_scale = action_scale
 
     def reset(self, rng: jax.Array) -> mm.EnvState:
         rng, qpos_key, qvel_key = self._split(rng, 3)
@@ -71,7 +77,7 @@ class Cheetah(mm.envs.SwappableBase):
     def step(self, state: mjx_env.State, action: jax.Array) -> mm.EnvState:
         state.info['xposbefore'] = state.data.qpos[0]
         action = self._np.clip(
-            self.params.action_scale * action, 
+            self.action_scale * action, 
             -1.0,
             1.0
         )

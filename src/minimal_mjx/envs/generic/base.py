@@ -10,15 +10,17 @@ from mujoco_playground._src.dm_control_suite import common
 from mujoco import mjx
 from mujoco_playground._src import mjx_env
 from minimal_mjx.utils import EnvState
-
+from minimal_mjx.utils.config import create_config_dict
 class SwappableBase(mjx_env.MjxEnv):
     """Atalante walker task."""
 
     def __init__(self,
-            xml_path: Path,
-            env_params: config_dict.ConfigDict,
-            backend = 'jnp',
-            num_free = 3
+            xml_path          : Path,
+            sim_dt            : float,
+            ctrl_dt           : float,
+            reward_weights    : dict = {},
+            backend           = 'jnp',
+            num_free          = 3
         ):
         """Initializes the base "swappable" MJX environment for RL training and 
         evaluation. This class implements core functionalities that are common 
@@ -33,16 +35,16 @@ class SwappableBase(mjx_env.MjxEnv):
             config_overrides: Optional dictionary to override specific config values.
             backend: Backend to use for computations, either 'jnp' for JAX or 'np' for NumPy.
         """
-        super().__init__(env_params)
-        self.params = env_params
+        mjx_config = create_config_dict({'sim_dt': sim_dt, 'ctrl_dt': ctrl_dt})
+        super().__init__(mjx_config)
         self._xml_path = xml_path.as_posix()
+        self.reward_weights = reward_weights
 
         self._spec = mj.MjSpec.from_file(
             filename=self._xml_path, 
             assets=common.get_assets()
         )
         self._mj_model: mj.MjModel = self._spec.compile()
-        self._mj_model.opt.timestep = self.params.sim_dt
         self._mj_model.opt.timestep = self.sim_dt
 
         self.setup_swappable_backend(backend)
@@ -259,9 +261,8 @@ class SwappableBase(mjx_env.MjxEnv):
         metrics,
         rewards
     ):
-        weights = self.params.reward.weights
         for k, v in rewards.items():
-            metrics[f"reward/{k}"] = weights[k] * v
+            metrics[f"reward/{k}"] = self.reward_weights[k] * v
 
         return metrics
 
@@ -270,7 +271,7 @@ class SwappableBase(mjx_env.MjxEnv):
         rewards,
         metrics
     ) -> tuple[jax.Array, dict[str, jax.Array]]:
-        _rewards = {k: v * self.params.reward.weights[k] for k, v in rewards.items()}
+        _rewards = {k: v * self.reward_weights[k] for k, v in rewards.items()}
         reward = sum(_rewards.values())
         
         metrics = self.get_metrics(metrics, rewards)

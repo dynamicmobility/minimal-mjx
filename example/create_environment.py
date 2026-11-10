@@ -7,13 +7,19 @@ def create_environment(cfg: mm.utils.Config, for_training=False, **env_kwargs):
     backend = 'jnp' if for_training else cfg.backend
     common_kwargs = {
         'backend': backend,
-        'env_params': env_params
+        'sim_dt': env_params.sim_dt,
+        'ctrl_dt': env_params.ctrl_dt,
+        'reward_weights': env_params.reward.weights.to_dict(),
     }
 
     match cfg.env_name:
         case 'Cheetah':
             from example.cheetah import Cheetah
-            env = Cheetah(**common_kwargs, **env_kwargs)
+            env = Cheetah(
+                **common_kwargs,
+                action_scale=env_params.action_scale,
+                **env_kwargs,
+            )
         case _:
             raise Exception(f'Unknown environment {cfg.env_name}.')
     return env, env_params

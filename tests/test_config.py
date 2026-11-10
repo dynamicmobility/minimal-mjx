@@ -150,10 +150,11 @@ def test_config_load_replaces_cfg(cheetah_yaml, cheetah_dict, tmp_path):
 
 def test_config_works_with_environment_factory(cheetah_yaml):
     """The properties are what scripts hand to environment factories."""
-    from example.cheetah import Cheetah
+    from example.create_environment import create_environment
     cfg = mmc.Config(cheetah_yaml)
-    env = Cheetah(env_params=cfg.env_params, backend=cfg.backend)
+    env, _ = create_environment(cfg)
     assert env.backend == cfg.backend
+    assert env.reward_weights == cfg.env_params.reward.weights.to_dict()
 
 
 # ---------------------------------------------------------------------------

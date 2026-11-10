@@ -25,25 +25,27 @@ arguments the library functions take. Here is `example/cheetah.yaml`:
 
 ## `env_config`
 
-Everything under `env_config` is handed to the environment as `env_params`
-([`cfg.env_params`][minimal_mjx.utils.config.Config.env_params]), and the environment
-reads it as `self.params`. The library itself reads only these keys:
+The `env_config` section is available as
+[`cfg.env_params`][minimal_mjx.utils.config.Config.env_params]. Environments do not
+receive it directly: `example/create_environment.py` reads the values out of it and
+passes them to the environment's constructor as arguments. Every environment takes
+these:
 
-| Key | Meaning |
-| --- | --- |
-| `ctrl_dt` | Control period in seconds: how often the policy acts. This is `env.dt`. |
-| `sim_dt` | Physics timestep. Each `step` runs `ctrl_dt / sim_dt` physics substeps. |
-| `reward.weights` | One weight per reward term. The keys must match the names your `reward_function` returns. |
+| Key | Constructor argument | Meaning |
+| --- | --- | --- |
+| `ctrl_dt` | `ctrl_dt` | Control period in seconds: how often the policy acts. This is `env.dt`. |
+| `sim_dt` | `sim_dt` | Physics timestep. Each `step` runs `ctrl_dt / sim_dt` physics substeps. |
+| `reward.weights` | `reward_weights` | One weight per reward term. The keys must match the names your `reward_function` returns. |
 
-Any other key is yours to define and read in your environment. `Cheetah` reads
-`action_scale` in `step`; the remaining keys in the example (`history_length`,
+Any other key is yours to define. To use it, add a constructor argument to your
+environment and pass the value in `create_environment`. `Cheetah` takes
+`action_scale` this way and uses it in `step`; the remaining keys in the example (`history_length`,
 `ideal_base_height`, `termination`, ...) show the kind of settings an environment might
 take, but `Cheetah` does not use them.
 
-!!! warning "The config is locked"
-    MuJoCo Playground locks `env_params` when the environment is built. Reading a key
-    that is missing from the YAML raises an error, so add every key your environment
-    reads to the config.
+!!! warning "Missing keys raise an error"
+    Reading a key from `cfg.env_params` that is missing from the YAML raises an error,
+    so add every key that `create_environment` reads to the config.
 
 ## `learning_params`
 
